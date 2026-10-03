@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-03T20:58:16.416Z",
+  "generated": "2026-10-03T21:03:16.387Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 659,
+      "ms": 505,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-03T13:28:01.915Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T20:58:16.416Z",
+      "checkedAt": "2026-10-03T21:03:16.387Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 39,
@@ -23,9 +23,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 74.65,
-        "d7": 95.74,
-        "d30": 95.44
+        "d1": 74.77,
+        "d7": 95.75,
+        "d30": 95.45
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 449,
+      "ms": 966,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-03T13:28:01.915Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T20:58:16.416Z",
+      "checkedAt": "2026-10-03T21:03:16.387Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 72,
@@ -49,8 +49,8 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 74.65,
-        "d7": 95.74,
+        "d1": 74.77,
+        "d7": 95.75,
         "d30": 95.59
       }
     },
@@ -60,17 +60,17 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 815,
+      "ms": 154,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T20:58:16.416Z",
+      "checkedAt": "2026-10-03T21:03:16.387Z",
       "cert": {
         "validTo": "2026-12-25",
-        "daysLeft": 83,
+        "daysLeft": 82,
         "issuer": "Let's Encrypt"
       },
       "certAlertedOn": null,
