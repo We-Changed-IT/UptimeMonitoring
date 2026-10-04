@@ -1,14 +1,20 @@
 // Uptime checker — draait in GitHub Actions, schrijft resultaten naar docs/
 // Geen npm-dependencies: alles met ingebouwde Node-modules.
+//
+// DATA_DIR wijst naar de map met monitors.json en docs/: normaal een checkout
+// van de privé datarepository, zonder die instelling deze repository zelf.
 
 import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import dns from "node:dns/promises";
+import net from "node:net";
 import tls from "node:tls";
 
 const ROOT = new URL("..", import.meta.url).pathname;
-const MONITORS = `${ROOT}monitors.json`;
-const STATUS = `${ROOT}docs/status.json`;
-const HISTORY_DIR = `${ROOT}docs/history`;
+const DATA = process.env.DATA_DIR ? process.env.DATA_DIR.replace(/\/?$/, "/") : ROOT;
+const MONITORS = `${DATA}monitors.json`;
+const STATUS = `${DATA}docs/status.json`;
+const HISTORY_DIR = `${DATA}docs/history`;
 const ALERT_FILE = `${ROOT}alert.txt`;
 
 const DEFAULT_TIMEOUT = 15000;
@@ -16,7 +22,7 @@ const SLOW_MS = 3000;        // boven deze responstijd: "traag", geen storing
 const CERT_WARN_DAYS = 14;   // waarschuwen als SSL-certificaat hierbinnen verloopt
 const RECENT_KEEP = 288;     // ruwe metingen die we bewaren (~24u bij 5 min)
 const DAILY_KEEP = 90;       // dagtotalen die we bewaren
-const INCIDENTS_KEEP = 50;   // afgesloten en lopende storingen die we bewaren
+const INCIDENTS_KEEP = 500;  // afgesloten en lopende storingen die we bewaren
 const CONFIRM_ROUNDS = 2;    // pas melden als een site zoveel rondes achter elkaar faalt
 const RETRY_DELAYS = [8000, 20000]; // wachttijd vóór de 2e en 3e poging binnen één ronde
 
@@ -61,6 +67,30 @@ const ERROR_TEXT = {
 
 const explain = (code) => (ERROR_TEXT[code] ? `${ERROR_TEXT[code]} (${code})` : code);
 
+const HTTP_TEXT = {
+  400: "ongeldig verzoek", 401: "inloggen vereist", 403: "toegang geweigerd", 404: "pagina niet gevonden",
+  410: "pagina verwijderd", 429: "te veel verzoeken", 500: "interne serverfout", 501: "niet ondersteund",
+  502: "bad gateway: achterliggende server geeft geen goed antwoord", 503: "dienst tijdelijk niet beschikbaar",
+  504: "gateway time-out: achterliggende server reageert niet", 508: "resourcelimiet van de hosting bereikt",
+  520: "onbekende fout bij de server (Cloudflare)", 521: "webserver staat uit (Cloudflare)",
+  522: "verbinding met de server verloopt (Cloudflare)", 523: "server onbereikbaar (Cloudflare)",
+  524: "server reageert te traag (Cloudflare)", 525: "SSL-handshake mislukt (Cloudflare)", 526: "ongeldig SSL-certificaat op de server (Cloudflare)",
+};
+
+// Soorten storingen. De statuspagina toont deze als label.
+//   dns      domeinnaam wijst nergens (meer) heen
+//   connect  server onbereikbaar of weigert de verbinding
+//   timeout  verbinding wel gemaakt, maar geen antwoord binnen de tijd
+//   cert     probleem met het SSL-certificaat
+//   server   server antwoordt met een 5xx-fout
+//   http     server antwoordt met een 4xx-fout
+//   content  pagina laadt, maar de inhoud klopt niet
+const CERT_CODES = new Set([
+  "CERT_HAS_EXPIRED", "CERT_NOT_YET_VALID", "DEPTH_ZERO_SELF_SIGNED_CERT", "SELF_SIGNED_CERT_IN_CHAIN",
+  "ERR_TLS_CERT_ALTNAME_INVALID", "UNABLE_TO_VERIFY_LEAF_SIGNATURE", "UNABLE_TO_GET_ISSUER_CERT_LOCALLY",
+  "CERT_REVOKED", "CERT_UNTRUSTED", "ERR_SSL_WRONG_VERSION_NUMBER",
+]);
+
 // --- één site checken -------------------------------------------------------
 
 async function probe(monitor) {
@@ -82,30 +112,122 @@ async function probe(monitor) {
     const min = monitor.expectStatus?.[0] ?? 200;
     const max = monitor.expectStatus?.[1] ?? 399;
     if (code < min || code > max) {
-      return { ok: false, code, ms, reason: `HTTP ${code}` };
+      const text = HTTP_TEXT[code];
+      return { ok: false, code, ms, category: code >= 500 ? "server" : "http", reason: `HTTP ${code}${text ? ` — ${text}` : ""}` };
     }
 
     // Inhoud controleren: een site kan 200 teruggeven en tóch stuk zijn.
     if (monitor.mustContain || monitor.mustNotContain) {
       const body = await res.text();
       if (monitor.mustContain && !body.includes(monitor.mustContain)) {
-        return { ok: false, code, ms, reason: `tekst "${monitor.mustContain}" niet gevonden` };
+        return { ok: false, code, ms, category: "content", reason: `tekst "${monitor.mustContain}" niet gevonden` };
       }
       const banned = monitor.mustNotContain ?? [];
       for (const needle of [].concat(banned)) {
         if (body.includes(needle)) {
-          return { ok: false, code, ms, reason: `foutmelding gevonden: "${needle}"` };
+          return { ok: false, code, ms, category: "content", reason: `foutmelding gevonden: "${needle}"` };
         }
       }
     }
-    return { ok: true, code, ms, reason: null };
+    return { ok: true, code, ms, reason: null, category: null };
   } catch (err) {
     const ms = Date.now() - started;
-    const name = err?.name === "TimeoutError"
-      ? `geen antwoord binnen ${timeout / 1000}s`
-      : explain(err?.cause?.code || err?.message || "netwerkfout");
-    return { ok: false, code: 0, ms, reason: String(name) };
+    const errCode = err?.cause?.code || err?.code;
+    if (err?.name === "TimeoutError") {
+      return { ok: false, code: 0, ms, category: "timeout", reason: `geen antwoord binnen ${timeout / 1000}s` };
+    }
+    const category = CERT_CODES.has(errCode) ? "cert"
+      : errCode === "ENOTFOUND" || errCode === "EAI_AGAIN" ? "dns"
+      : "connect";
+    return { ok: false, code: 0, ms, category, reason: String(explain(errCode || err?.message || "netwerkfout")) };
   }
+}
+
+// --- oorzaak uitzoeken ---------------------------------------------------------
+// Als een site geen HTTP-antwoord geeft, lopen we de stappen los na: DNS,
+// verbinding met de server, SSL-certificaat. Zo zie je precies waar het vastloopt.
+
+const withTimeout = (promise, ms) =>
+  Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("timeout"), { code: "TIMEOUT" })), ms))]);
+
+function tcpConnect(host, port, ms) {
+  return new Promise((resolve, reject) => {
+    const socket = net.connect({ host, port });
+    const timer = setTimeout(() => { socket.destroy(); reject(Object.assign(new Error("timeout"), { code: "ETIMEDOUT" })); }, ms);
+    socket.once("connect", () => { clearTimeout(timer); socket.destroy(); resolve(); });
+    socket.once("error", (err) => { clearTimeout(timer); reject(err); });
+  });
+}
+
+function peerCertificate(host, port, ip, verify) {
+  return new Promise((resolve, reject) => {
+    const socket = tls.connect({ host: ip, port, servername: host, rejectUnauthorized: verify, timeout: 10000 }, () => {
+      const cert = socket.getPeerCertificate();
+      socket.end();
+      resolve(cert);
+    });
+    socket.once("error", reject);
+    socket.once("timeout", () => { socket.destroy(); reject(Object.assign(new Error("timeout"), { code: "ETIMEDOUT" })); });
+  });
+}
+
+const certSummary = (cert) => {
+  if (!cert?.valid_to) return null;
+  const validTo = new Date(cert.valid_to);
+  return {
+    validTo: validTo.toISOString().slice(0, 10),
+    daysLeft: Math.floor((validTo - Date.now()) / 86400000),
+    issuer: cert.issuer?.O ?? cert.issuer?.CN ?? null,
+    subject: cert.subject?.CN ?? null,
+  };
+};
+
+async function diagnose(url) {
+  let u;
+  try { u = new URL(url); } catch { return null; }
+  const host = u.hostname;
+  const https = u.protocol === "https:";
+  const port = Number(u.port) || (https ? 443 : 80);
+
+  let ip;
+  try {
+    const addrs = await withTimeout(dns.lookup(host, { all: true }), 10000);
+    ip = addrs.find((a) => a.family === 4)?.address ?? addrs[0]?.address;
+    if (!ip) throw Object.assign(new Error("geen adres"), { code: "ENODATA" });
+  } catch (err) {
+    const why = err.code === "ENOTFOUND" ? `${host} bestaat niet of heeft geen IP-adres`
+      : err.code === "ENODATA" ? `${host} heeft geen IP-adres (A/AAAA-record ontbreekt)`
+      : `DNS-server geeft geen antwoord voor ${host}`;
+    return { category: "dns", reason: `DNS: ${why} (${err.code})`, ip: null };
+  }
+
+  try {
+    await tcpConnect(ip, port, 10000);
+  } catch (err) {
+    const why = err.code === "ECONNREFUSED" ? "server weigert de verbinding"
+      : err.code === "ETIMEDOUT" ? "server reageert niet"
+      : err.code === "EHOSTUNREACH" || err.code === "ENETUNREACH" ? "server onbereikbaar"
+      : "verbinding mislukt";
+    return { category: "connect", reason: `${why} op ${ip}:${port} (${err.code})`, ip };
+  }
+
+  if (https) {
+    try {
+      await peerCertificate(host, port, ip, true);
+    } catch (err) {
+      if (CERT_CODES.has(err.code) || /certificate|SSL|TLS/i.test(err.message)) {
+        const cert = await peerCertificate(host, port, ip, false).then(certSummary).catch(() => null);
+        const extra = cert
+          ? [cert.subject && `voor ${cert.subject}`, cert.issuer && `uitgegeven door ${cert.issuer}`, `geldig tot ${cert.validTo}`].filter(Boolean).join(", ")
+          : "";
+        return { category: "cert", reason: `${explain(err.code ?? "SSL-fout")}${extra ? ` — ${extra}` : ""}`, ip, cert };
+      }
+      return { category: "connect", reason: `SSL-verbinding mislukt op ${ip} (${err.code ?? err.message})`, ip };
+    }
+  }
+
+  // DNS, verbinding en certificaat zijn in orde: de webserver zelf antwoordt niet.
+  return { category: "timeout", reason: null, ip };
 }
 
 // Een paar keer opnieuw proberen voordat we een ronde als mislukt tellen —
@@ -117,6 +239,18 @@ async function check(monitor) {
     await new Promise((r) => setTimeout(r, delay));
     const next = await probe(monitor);
     result = next.ok ? { ...next, flaky: true } : next;
+  }
+  if (!result.ok && result.code === 0) {
+    const found = await diagnose(monitor.url).catch(() => null);
+    if (found) {
+      result = {
+        ...result,
+        category: found.reason ? found.category : result.category,
+        reason: found.reason ?? `${result.reason} — DNS, verbinding en certificaat in orde, webserver antwoordt niet`,
+        ip: found.ip,
+        cert: found.cert,
+      };
+    }
   }
   return result;
 }
@@ -138,10 +272,7 @@ function certificateInfo(url) {
       () => {
         const cert = socket.getPeerCertificate();
         socket.end();
-        if (!cert?.valid_to) return resolve(null);
-        const validTo = new Date(cert.valid_to);
-        const daysLeft = Math.floor((validTo - Date.now()) / 86400000);
-        resolve({ validTo: validTo.toISOString().slice(0, 10), daysLeft, issuer: cert.issuer?.O ?? null });
+        resolve(certSummary(cert));
       }
     );
     socket.on("error", () => resolve(null));
@@ -153,7 +284,7 @@ function certificateInfo(url) {
 
 function updateHistory(history, result, now) {
   const point = { t: now, ok: result.ok ? 1 : 0, ms: result.ms, code: result.code };
-  if (!result.ok) point.r = result.reason;
+  if (!result.ok) { point.r = result.reason; point.c = result.category; }
   const recent = [...(history.recent ?? []), point];
   const daily = { ...(history.daily ?? {}) };
   const day = today();
@@ -169,9 +300,18 @@ function updateHistory(history, result, now) {
 }
 
 // Storingslog: één regel per bevestigde storing, met begin, einde en oorzaak.
-function openIncident(history, start, reason) {
+function openIncident(history, start, result) {
   if (history.incidents.some((i) => i.end === null)) return;
-  history.incidents = [...history.incidents, { start, end: null, reason }].slice(-INCIDENTS_KEEP);
+  const incident = { start, end: null, category: result.category, reason: result.reason, code: result.code || null };
+  history.incidents = [...history.incidents, incident].slice(-INCIDENTS_KEEP);
+}
+
+// Tijdens een lopende storing kan de oorzaak veranderen (bijv. eerst geen
+// verbinding, daarna een 503). We onthouden alle verschillende oorzaken.
+function noteIncidentReason(history, result) {
+  const open = history.incidents.findLast((i) => i.end === null);
+  if (!open || open.reason === result.reason) return;
+  open.also = [...new Set([...(open.also ?? []), result.reason])].slice(0, 5);
 }
 
 function closeIncident(history, end) {
@@ -231,14 +371,14 @@ for (const monitor of config.monitors) {
 
   // Onderhoud: site overslaan, geen metingen en geen meldingen.
   if (monitor.paused) {
-    monitors.push({ ...prev, slug, name: monitor.name, url: monitor.url, paused: true });
+    monitors.push({ ...prev, slug, name: monitor.name, url: monitor.url, group: monitor.group ?? "klant", client: monitor.client ?? null, paused: true });
     console.log(`PAUZE ${monitor.name}`);
     continue;
   }
 
   const result = await check(monitor);
 
-  const cert = result.ok ? await certificateInfo(monitor.url) : (prev.cert ?? null);
+  const cert = result.ok ? await certificateInfo(monitor.url) : (result.cert ?? prev.cert ?? null);
 
   const historyPath = `${HISTORY_DIR}/${slug}.json`;
   const history = updateHistory(await readJson(historyPath, {}), result, now);
@@ -256,9 +396,10 @@ for (const monitor of config.monitors) {
 
   if (!result.ok && !alerted && failCount >= confirmRounds) {
     alerted = true;
-    openIncident(history, since, result.reason);
+    openIncident(history, since, result);
     events.push({ level: "down", name: monitor.name, url: monitor.url, text: `${monitor.name} is onbereikbaar — ${result.reason}` });
   }
+  if (!result.ok && alerted) noteIncidentReason(history, result);
   if (result.ok && (prev.alerted ?? prev.ok === false)) {
     closeIncident(history, now);
     const minutes = prev.since ? Math.round((Date.parse(now) - Date.parse(prev.since)) / 60000) : null;
@@ -277,11 +418,15 @@ for (const monitor of config.monitors) {
     slug,
     name: monitor.name,
     url: monitor.url,
+    group: monitor.group ?? "klant",
+    client: monitor.client ?? null,
     ok: result.ok,
     code: result.code,
     ms: result.ms,
     slow: result.ok && result.ms > (monitor.slowMs ?? SLOW_MS),
     reason: result.reason,
+    category: result.category ?? null,
+    ip: result.ip ?? null,
     flaky: result.flaky ?? false,
     since,
     failCount,
@@ -289,7 +434,7 @@ for (const monitor of config.monitors) {
     checkedAt: now,
     cert,
     certAlertedOn,
-    uptime: { d1: uptimeRecent(history.recent, 24), d7: uptimePct(history.daily, 7), d30: uptimePct(history.daily, 30) },
+    uptime: { d1: uptimeRecent(history.recent, 24), d7: uptimePct(history.daily, 7), d30: uptimePct(history.daily, 30), d90: uptimePct(history.daily, 90) },
   });
 
   console.log(`${result.ok ? "OK  " : "DOWN"} ${monitor.name} — ${result.code || "-"} in ${result.ms}ms${result.reason ? ` (${result.reason})` : ""}`);

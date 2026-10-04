@@ -4,17 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Monitors beheren</title>
+<title>Sites beheren · We Changed IT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #eef1f0;
+    /* huisstijl We Changed IT: navy en grijs */
+    --brand: #232b5e;
+    --brand-gray: #9b9b9b;
+    --paper: #eff0f4;
     --panel: #ffffff;
-    --ink: #1d2a2b;
-    --muted: #6c7c7b;
-    --rule: #dde3e1;
+    --ink: #1f2547;
+    --muted: #6b7088;
+    --rule: #dfe1e9;
     --ok: #2e7d5b;
     --down: #b3261e;
     --warn: #b3720d;
@@ -74,7 +77,7 @@
     color: var(--ink);
     cursor: pointer;
   }
-  button.primary { background: var(--ok); border-color: var(--ok); color: #fff; }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
   button.danger { color: var(--down); }
   button:disabled { opacity: 0.5; cursor: default; }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -102,13 +105,28 @@
   details { font-size: 14px; color: var(--muted); margin-top: 12px; }
   details summary { cursor: pointer; }
   details ol { padding-left: 20px; }
+  .brandbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 26px; padding-bottom: 14px; border-bottom: 2px solid var(--brand); }
+  .logo { font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: 0.01em; color: var(--brand); text-decoration: none; }
+  .logo .g { color: var(--brand-gray); }
+  .logo .at { display: inline-block; background: var(--brand); color: #fff; padding: 0 2px; margin: 0 1px; border-radius: 2px; font-size: 0.82em; line-height: 1.05; vertical-align: 0.06em; }
+  .brandbar .product { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .brandbar nav { margin-left: auto; font-size: 14px; color: var(--muted); }
+  select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: #fff; color: var(--ink); width: 100%; }
+  .group-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 20px 4px; border-top: 1px solid var(--rule); }
+  .group-title:first-child { border-top: 0; }
+  .group-title + .item { border-top: 0; }
   code { font-size: 13px; background: var(--paper); padding: 1px 4px; border-radius: 3px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Monitors beheren</h1>
-  <p class="lead">Sites toevoegen, aanpassen of pauzeren. Wijzigingen gaan binnen 5 minuten in. <a href="./">Terug naar de statuspagina</a></p>
+  <div class="brandbar">
+    <a class="logo" href="./" aria-label="We Changed IT">We <span class="g">Ch</span><span class="at">a</span><span class="g">nged</span> IT</a>
+    <span class="product">Uptime monitor</span>
+    <nav><a href="./">Naar de statuspagina</a></nav>
+  </div>
+  <h1>Sites beheren</h1>
+  <p class="lead">Sites toevoegen, aanpassen of pauzeren. Wijzigingen gaan binnen 5 minuten in.</p>
 
   <!-- Inloggen met een GitHub-token -->
   <section class="panel" id="login">
@@ -122,7 +140,7 @@
       <summary>Hoe maak ik een token?</summary>
       <ol>
         <li>Ga op GitHub naar Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
-        <li>Repository access: <b>Only select repositories</b> en kies alleen <code id="repo-name">deze repository</code>.</li>
+        <li>Repository access: <b>Only select repositories</b> en kies <b>UptimeData</b> en <b>UptimeMonitoring</b>.</li>
         <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Verder niets.</li>
         <li>Kies een vervaldatum, maak het token aan en plak het hierboven.</li>
       </ol>
@@ -143,6 +161,20 @@
           <div>
             <label for="f-url">Adres</label>
             <input type="url" id="f-url" required placeholder="https://www.voorbeeld.nl/">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="f-group">Soort</label>
+            <select id="f-group">
+              <option value="klant">Site van een klant</option>
+              <option value="eigen">Eigen site</option>
+            </select>
+          </div>
+          <div id="client-wrap">
+            <label for="f-client">Klant <span class="hint">— voor groepering</span></label>
+            <input type="text" id="f-client" list="clients" placeholder="Brouwers Infra">
+            <datalist id="clients"></datalist>
           </div>
         </div>
         <label for="f-contain">Moet bevatten <span class="hint">— optioneel, bijv. tekst van je offerteknop</span></label>
@@ -168,132 +200,71 @@
       </form>
     </section>
 
-    <div class="actions"><button id="logout-btn">Uitloggen</button></div>
+    <div class="actions"><button data-logout>Uitloggen</button></div>
   </div>
 </main>
 
-<script>
-// Deze pagina past monitors.json in de repository aan via de GitHub-API.
-// Eigenaar en repository leiden we af uit het Pages-adres
-// (<eigenaar>.github.io/<repository>/); vul ze hieronder in als dat niet klopt.
-const OWNER = location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : "Derkvg158";
-const REPO = location.hostname.endsWith(".github.io") ? location.pathname.split("/")[1] : "UptimeMonitoring";
-const FILE = "monitors.json";
-const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`;
-const TOKEN_KEY = "uptime-beheer-token";
+<script type="module">
+// Deze pagina past monitors.json aan via de GitHub-API (zie gh.js).
+import { $, esc, errorText, setupLogin } from "./gh.js";
 
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const slugify = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const FILE = "monitors.json";
 
-let token = null;
+let gh = null;       // verbonden GitHub-client
 let config = null;   // inhoud van monitors.json
 let sha = null;      // versie van monitors.json, nodig om op te slaan
 let editing = null;  // index van de site die bewerkt wordt, of null bij toevoegen
 
-$("repo-name").textContent = `${OWNER}/${REPO}`;
-
-const storage = {
-  get() { try { return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY); } catch { return null; } },
-  set(value, remember) {
-    try { (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, value); } catch {}
-  },
-  clear() { try { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); } catch {} },
-};
-
-// Base64 met UTF-8, zodat namen met é of — goed opgeslagen worden.
-const toBase64 = (text) => {
-  const bytes = new TextEncoder().encode(text);
-  let bin = "";
-  for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin);
-};
-const fromBase64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, "")), (c) => c.charCodeAt(0)));
-
-async function github(method, body) {
-  const res = await fetch(API + (method === "GET" ? `?t=${Date.now()}` : ""), {
-    method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      ...(body ? { "Content-Type": "application/json" } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const err = new Error(`GitHub gaf ${res.status}`);
-    err.status = res.status;
-    throw err;
-  }
-  return res.json();
-}
-
-const errorText = (err) => ({
-  401: "Token ongeldig of verlopen.",
-  403: "Dit token mag de repository niet aanpassen. Geef het Contents: Read and write.",
-  404: `Repository ${OWNER}/${REPO} of ${FILE} niet gevonden. Heeft het token toegang tot deze repository?`,
-  422: "Iemand anders heeft net ook iets aangepast. Laad de pagina opnieuw en probeer het nog eens.",
-  409: "Iemand anders heeft net ook iets aangepast. Laad de pagina opnieuw en probeer het nog eens.",
-})[err.status] ?? `Er ging iets mis: ${err.message}`;
-
 async function load() {
-  const data = await github("GET");
-  sha = data.sha;
-  config = JSON.parse(fromBase64(data.content));
+  ({ json: config, sha } = await gh.readJson(FILE));
   config.monitors ??= [];
 }
 
 async function save(message) {
-  const text = JSON.stringify(config, null, 2) + "\n";
-  const data = await github("PUT", { message, content: toBase64(text), sha });
-  sha = data.content.sha;
+  sha = await gh.writeJson(FILE, config, sha, message);
 }
 
-// --- inloggen ---------------------------------------------------------------
-
-async function login(value, remember, store = true) {
-  token = value.trim();
-  $("login-msg").className = "msg";
-  $("login-msg").textContent = "Bezig…";
-  try {
-    await load();
-  } catch (err) {
-    token = null;
-    $("login-msg").className = "msg err";
-    $("login-msg").textContent = errorText(err);
-    return;
-  }
-  if (store) storage.set(token, remember);
-  $("login").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  $("login-msg").textContent = "";
-  render();
-}
-
-$("login-btn").addEventListener("click", () => {
-  if ($("token").value.trim()) login($("token").value, $("remember").checked);
-});
-$("token").addEventListener("keydown", (e) => { if (e.key === "Enter") $("login-btn").click(); });
-$("logout-btn").addEventListener("click", () => {
-  storage.clear();
-  token = config = sha = null;
-  $("token").value = "";
-  $("app").classList.add("hidden");
-  $("login").classList.remove("hidden");
+setupLogin({
+  async onLogin(client) {
+    gh = client;
+    try {
+      await load();
+    } catch (err) {
+      $("login").classList.remove("hidden");
+      $("login-msg").className = "msg err";
+      $("login-msg").textContent = errorText(err, gh.repo);
+      return;
+    }
+    $("app").classList.remove("hidden");
+    render();
+  },
+  onLogout() {
+    gh = config = sha = null;
+    $("app").classList.add("hidden");
+  },
 });
 
 // --- lijst ------------------------------------------------------------------
 
+const groupOf = (m) => (m.group === "eigen" ? "eigen" : "klant");
+
 function render() {
   const list = config.monitors;
+  // per klant groeperen, eigen sites onderaan
+  const order = list.map((m, i) => ({ m, i, key: groupOf(m) === "eigen" ? "\u0000" : (m.client || m.name) }))
+    .sort((a, b) => (a.key === "\u0000") - (b.key === "\u0000") || a.key.localeCompare(b.key, "nl") || a.m.name.localeCompare(b.m.name, "nl"));
+  let lastKey = null;
   $("list").innerHTML = list.length
-    ? list.map((m, i) => {
+    ? order.map(({ m, i, key }) => {
+        const title = key !== lastKey ? `<div class="group-title">${key === "\u0000" ? "Eigen sites" : `Klant: ${esc(key)}`}</div>` : "";
+        lastKey = key;
         const tags = [
           m.paused ? '<span class="tag-paused">gepauzeerd</span>' : "",
           m.mustContain ? `moet bevatten: “${esc(m.mustContain)}”` : "",
           m.confirmRounds ? `melden na ${esc(m.confirmRounds)} ronde${m.confirmRounds > 1 ? "s" : ""}` : "",
         ].filter(Boolean).join(" · ");
-        return `
+        return `${title}
           <div class="item">
             <div class="info">
               <div class="name">${esc(m.name)}</div>
@@ -308,6 +279,10 @@ function render() {
           </div>`;
       }).join("")
     : '<div class="empty">Nog geen sites. Voeg er hieronder een toe.</div>';
+
+  // bestaande klantnamen als suggestie in het formulier
+  const clients = [...new Set(list.map((m) => m.client).filter(Boolean))].sort((a, b) => a.localeCompare(b, "nl"));
+  $("clients").innerHTML = clients.map((c) => `<option value="${esc(c)}">`).join("");
 }
 
 $("list").addEventListener("click", async (e) => {
@@ -354,6 +329,9 @@ function startEdit(i) {
   $("f-slow").value = m.slowMs ?? "";
   $("f-confirm").value = m.confirmRounds ?? "";
   $("f-paused").checked = !!m.paused;
+  $("f-group").value = groupOf(m);
+  $("f-client").value = m.client ?? "";
+  toggleClient();
   $("form-msg").textContent = "";
   $("editor").scrollIntoView({ behavior: "smooth" });
 }
@@ -364,9 +342,13 @@ function resetForm() {
   $("editor-title").textContent = "Site toevoegen";
   $("save-btn").textContent = "Toevoegen";
   $("cancel-btn").classList.add("hidden");
+  toggleClient();
 }
 
 $("cancel-btn").addEventListener("click", () => { resetForm(); $("form-msg").textContent = ""; });
+
+function toggleClient() { $("client-wrap").classList.toggle("hidden", $("f-group").value === "eigen"); }
+$("f-group").addEventListener("change", toggleClient);
 
 function readForm() {
   const name = $("f-name").value.trim();
@@ -396,6 +378,8 @@ function readForm() {
   setOrDrop("slowMs", $("f-slow").value ? Number($("f-slow").value) : "");
   setOrDrop("confirmRounds", $("f-confirm").value ? Number($("f-confirm").value) : "");
   setOrDrop("paused", $("f-paused").checked || "");
+  monitor.group = $("f-group").value;
+  setOrDrop("client", monitor.group === "klant" ? $("f-client").value.trim() : "");
   return monitor;
 }
 
@@ -437,9 +421,6 @@ $("form").addEventListener("submit", async (e) => {
   }
 });
 
-// Eerder bewaard token: meteen inloggen.
-const saved = storage.get();
-if (saved) login(saved, true, false);
 </script>
 </body>
 </html>

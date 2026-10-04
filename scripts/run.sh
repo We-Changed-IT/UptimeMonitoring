@@ -9,22 +9,69 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-300}"
 DURATION_MINUTES="${DURATION_MINUTES:-0}"
 deadline=$(( $(date +%s) + DURATION_MINUTES * 60 ))
 
-git config user.name "uptime-bot"
-git config user.email "uptime-bot@users.noreply.github.com"
+git config --global user.name "uptime-bot"
+git config --global user.email "uptime-bot@users.noreply.github.com"
+
+# --- waar staan de gegevens? ------------------------------------------------
+# Met DATA_TOKEN staan sitelijst, status en storingen in een privé repository
+# (DATA_REPO), zodat niemand ze kan inzien zonder in te loggen. Zonder
+# DATA_TOKEN blijft alles in deze (openbare) repository, zoals voorheen.
+DATA_DIR="."
+if [ -n "${DATA_TOKEN:-}" ]; then
+  DATA_REPO="${DATA_REPO:-${GITHUB_REPOSITORY_OWNER:-Derkvg158}/UptimeData}"
+  rm -rf data
+  DATA_URL="${DATA_URL:-https://x-access-token:${DATA_TOKEN}@github.com/${DATA_REPO}.git}"
+  if ! git clone -q --depth 1 "$DATA_URL" data 2>/dev/null; then
+    echo "::error::Kan ${DATA_REPO} niet ophalen. Bestaat de repository en mag DATA_TOKEN erin schrijven?"
+    exit 1
+  fi
+  DATA_DIR="data"
+
+  # Eerste keer: bestaande gegevens verhuizen naar de privé repository en
+  # daarna uit de openbare repository halen.
+  if [ ! -f data/monitors.json ]; then
+    echo "Gegevens verhuizen naar ${DATA_REPO}"
+    mkdir -p data/docs
+    cp monitors.json data/
+    [ -f docs/status.json ] && cp docs/status.json data/docs/
+    [ -d docs/history ] && cp -r docs/history data/docs/
+    git -C data add -A
+    git -C data commit -q -m "Gegevens overgezet uit de openbare repository"
+    git -C data push -q origin HEAD:main || { echo "::error::Push naar ${DATA_REPO} mislukt"; exit 1; }
+    git rm -q -r --ignore-unmatch monitors.json docs/status.json docs/history
+    git commit -q -m "Gegevens verhuisd naar privé repository" || true
+    git pull -q --rebase origin main && git push -q origin HEAD:main || echo "::warning::Opruimen openbare repository mislukt"
+  fi
+fi
+export DATA_DIR
 
 commit_results() {
-  git add docs/
-  if git diff --quiet --staged; then
+  local dir="$DATA_DIR"
+  git -C "$dir" add docs/
+  if git -C "$dir" diff --quiet --staged; then
     # Niets te committen, maar wel wijzigingen van de beheerpagina ophalen.
-    git pull -q --rebase || true
+    git -C "$dir" pull -q --rebase origin main || true
     return 0
   fi
-  git commit -q -m "status $(date -u +'%Y-%m-%d %H:%M')"
+  git -C "$dir" commit -q -m "status $(date -u +'%Y-%m-%d %H:%M')"
   for attempt in 1 2 3; do
-    git pull -q --rebase -X theirs && git push -q && return 0
+    git -C "$dir" pull -q --rebase -X theirs origin main && git -C "$dir" push -q origin HEAD:main && return 0
     sleep $(( attempt * 5 ))
   done
   echo "::warning::Resultaten konden niet gepusht worden"
+}
+
+# GitHub zet geplande workflows uit na 60 dagen zonder activiteit in de
+# repository. Staan de gegevens elders, dan houden we hem met een wekelijkse
+# hartslag-commit wakker.
+heartbeat() {
+  [ "$DATA_DIR" = "." ] && return 0
+  local last
+  last=$(cat docs/heartbeat.txt 2>/dev/null || echo 0)
+  [ $(( $(date +%s) - last )) -lt 604800 ] && return 0
+  date +%s > docs/heartbeat.txt
+  git add docs/heartbeat.txt
+  git commit -q -m "hartslag" && { git pull -q --rebase origin main && git push -q origin HEAD:main || true; }
 }
 
 send_mail() {
@@ -66,6 +113,7 @@ while true; do
   node scripts/check.mjs || echo "::warning::Controle-script faalde"
   commit_results
   send_mail
+  heartbeat
 
   next=$(( started + INTERVAL_SECONDS ))
   [ "$next" -ge "$deadline" ] && break

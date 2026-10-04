@@ -4,21 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Status van mijn websites</title>
+<title>Uptime · We Changed IT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #eef1f0;
+    /* huisstijl We Changed IT: navy en grijs */
+    --brand: #232b5e;
+    --brand-gray: #9b9b9b;
+    --paper: #eff0f4;
     --panel: #ffffff;
-    --ink: #1d2a2b;
-    --muted: #6c7c7b;
-    --rule: #dde3e1;
+    --ink: #1f2547;
+    --muted: #6b7088;
+    --rule: #dfe1e9;
     --ok: #2e7d5b;
     --down: #b3261e;
     --warn: #b3720d;
     --idle: #cfd8d6;
+    --chip: #f4f6f5;
   }
   * { box-sizing: border-box; }
   body {
@@ -32,220 +36,580 @@
     font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 760px; margin: 0 auto; }
+  main { max-width: 920px; margin: 0 auto; }
+  .hidden { display: none !important; }
+  a { color: inherit; }
 
-  .verdict { margin-bottom: 28px; }
-  .verdict h1 {
-    margin: 0;
-    font-size: clamp(28px, 7vw, 42px);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  .verdict p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+  .brandbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 26px; padding-bottom: 14px; border-bottom: 2px solid var(--brand); }
+  .logo { font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: 0.01em; color: var(--brand); text-decoration: none; }
+  .logo .g { color: var(--brand-gray); }
+  .logo .at { display: inline-block; background: var(--brand); color: #fff; padding: 0 2px; margin: 0 1px; border-radius: 2px; font-size: 0.82em; line-height: 1.05; vertical-align: 0.06em; }
+  .brandbar .product { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .brandbar nav { margin-left: auto; font-size: 14px; color: var(--muted); display: flex; gap: 14px; }
+  .top { margin-bottom: 4px; }
+  .top h1 { margin: 0; font-size: clamp(28px, 6vw, 40px); font-weight: 600; letter-spacing: -0.02em; }
+  .sub { margin: 0 0 22px; color: var(--muted); font-size: 14px; }
 
-  .board {
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
+  .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 20px; margin-bottom: 20px; }
+  h2 { margin: 28px 0 10px; font-size: 18px; font-weight: 600; }
+
+  /* inloggen */
+  label { display: block; font-size: 14px; font-weight: 500; margin: 0 0 4px; }
+  .hint { font-weight: 400; color: var(--muted); }
+  input[type=password], select {
+    width: 100%; font: inherit; font-size: 15px; padding: 8px 10px;
+    border: 1px solid var(--rule); border-radius: 4px; background: #fff; color: var(--ink);
   }
+  select { width: auto; font-size: 14px; padding: 5px 8px; }
+  .check { display: flex; align-items: center; gap: 8px; font-weight: 400; margin-top: 12px; }
+  button {
+    font: inherit; font-size: 14px; font-weight: 500; padding: 8px 14px; border-radius: 4px;
+    border: 1px solid var(--rule); background: #fff; color: var(--ink); cursor: pointer;
+  }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; margin-top: 14px; }
+  .msg { font-size: 14px; margin-top: 12px; }
+  .msg.err { color: var(--down); }
+  details.help { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  details.help summary { cursor: pointer; }
+  details.help ol { padding-left: 20px; }
+
+  /* periode */
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .periods { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--panel); }
+  .periods button { border: 0; border-radius: 0; border-left: 1px solid var(--rule); padding: 6px 14px; background: transparent; color: var(--muted); }
+  .periods button:first-child { border-left: 0; }
+  .periods button[aria-pressed=true] { background: var(--brand); color: #fff; }
+
+  /* kerncijfers */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
+  .tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; }
+  .tile .label { font-size: 13px; color: var(--muted); }
+  .tile .value { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; margin-top: 2px; }
+  .tile .value.bad { color: var(--down); }
+  .tile .note { font-size: 12px; color: var(--muted); }
+  @media (max-width: 680px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+
+  /* sites, gegroepeerd per klant */
+  .group { margin-bottom: 14px; }
+  .group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 0 2px 6px; }
+  .group-head .gname { font-weight: 600; font-size: 15px; }
+  .group-head .gtype { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .group-head .gstats { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .group-head .gstats b { color: var(--ink); font-weight: 500; }
+  .group-head .gstats .bad { color: var(--down); }
+  .board { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
   .site { padding: 18px 20px; border-top: 1px solid var(--rule); }
   .site:first-child { border-top: 0; }
-
-  .head { display: flex; align-items: baseline; gap: 10px; }
-  .dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--idle); flex: none;
-    align-self: center;
-  }
+  .head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--idle); flex: none; align-self: center; }
   .dot.ok { background: var(--ok); }
   .dot.down { background: var(--down); }
   .dot.warn { background: var(--warn); }
-  .dot.paused { background: var(--idle); }
   .name { font-weight: 600; }
-  .name a { color: inherit; text-decoration: none; }
+  .name a { text-decoration: none; }
   .name a:hover { text-decoration: underline; }
-  .timing { margin-left: auto; font-size: 14px; color: var(--muted); }
-  .timing.bad { color: var(--down); font-weight: 500; }
+  .state { margin-left: auto; font-size: 14px; color: var(--muted); }
+  .state.bad { color: var(--down); font-weight: 500; }
+  .problem { margin: 8px 0 0 19px; font-size: 14px; color: var(--down); }
+  .problem .since { color: var(--muted); }
 
-  .bars { display: flex; gap: 2px; margin: 14px 0 8px; height: 30px; align-items: stretch; }
+  .bars { display: flex; gap: 2px; margin: 14px 0 4px; height: 28px; align-items: stretch; }
   .bar { flex: 1 1 0; min-width: 0; border-radius: 1px; background: var(--idle); }
   .bar.ok { background: var(--ok); }
   .bar.part { background: var(--warn); }
   .bar.down { background: var(--down); }
-
-  .meta {
-    display: flex; flex-wrap: wrap; gap: 4px 18px;
-    font-size: 13px; color: var(--muted);
-  }
-  .meta b { font-weight: 500; color: var(--ink); }
-  .alert { color: var(--down); }
-  .cert-warn { color: var(--warn); }
+  .axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
 
   .spark { display: block; width: 100%; height: 34px; margin: 10px 0 4px; }
   .spark path { fill: none; stroke: var(--muted); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
   .spark .fail { stroke: var(--down); stroke-width: 2; }
-  details.incidents { margin-top: 8px; font-size: 13px; color: var(--muted); }
-  details.incidents summary { cursor: pointer; }
-  details.incidents ul { margin: 6px 0 0; padding-left: 18px; }
-  details.incidents li { margin: 2px 0; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .meta b { font-weight: 500; color: var(--ink); }
+  .meta .warn { color: var(--warn); }
+
+  /* labels per soort storing */
+  .cat { display: inline-block; font-size: 12px; font-weight: 500; padding: 1px 7px; border-radius: 10px; background: var(--chip); color: var(--ink); border: 1px solid var(--rule); white-space: nowrap; }
+  .cat.dns { border-color: #c9b8e0; background: #f4effa; }
+  .cat.connect, .cat.timeout { border-color: #e7c3bf; background: #fbf0ef; }
+  .cat.cert { border-color: #ecd3a6; background: #fdf6e9; }
+  .cat.server, .cat.http { border-color: #c6d4e8; background: #eff4fa; }
+  .cat.content { border-color: #cfe0d6; background: #f0f7f3; }
+
+  /* storingslijst */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
+  .filters label { margin: 0; font-weight: 400; display: inline; }
+  .filters .spacer { flex: 1; }
+  .table-wrap { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-top: 1px solid var(--rule); vertical-align: top; }
+  th { border-top: 0; font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  td.nowrap { white-space: nowrap; }
+  td.cause { min-width: 240px; }
+  tr.ongoing td { background: #fdf3f2; }
+  td .also { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .empty { padding: 20px; color: var(--muted); }
+
+  @media (max-width: 680px) {
+    table.outages thead { display: none; }
+    table.outages tr { display: block; padding: 10px 14px; border-top: 1px solid var(--rule); }
+    table.outages tr:first-child { border-top: 0; }
+    table.outages td { display: block; border: 0; padding: 1px 0; white-space: normal; }
+    table.outages td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); }
+  }
 
   footer { margin-top: 20px; font-size: 13px; color: var(--muted); }
-  .empty { padding: 28px 20px; color: var(--muted); }
-  @media (max-width: 480px) {
-    .bars { height: 24px; }
-    .timing { width: 100%; margin-left: 19px; }
-  }
 </style>
 </head>
 <body>
 <main>
-  <div class="verdict">
-    <h1 id="headline">Statuspagina laden</h1>
-    <p id="subhead">Even geduld.</p>
+  <div class="brandbar">
+    <a class="logo" href="./" aria-label="We Changed IT">We <span class="g">Ch</span><span class="at">a</span><span class="g">nged</span> IT</a>
+    <span class="product">Uptime monitor</span>
+    <nav id="nav" class="hidden"><a href="beheer.html">Sites beheren</a><a href="#" data-logout>Uitloggen</a></nav>
   </div>
-  <div class="board" id="board"></div>
-  <footer><span id="footer"></span> <a href="beheer.html" style="color:inherit">Beheer</a></footer>
+  <div class="top">
+    <h1 id="headline">Status</h1>
+  </div>
+  <p class="sub" id="subhead">Log in om de status van je websites te zien.</p>
+
+  <section class="panel" id="login">
+    <label for="token">GitHub-token <span class="hint">— wordt alleen in deze browser bewaard</span></label>
+    <input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+    <label class="check"><input type="checkbox" id="remember" checked> Onthouden op dit apparaat</label>
+    <button class="primary" id="login-btn">Inloggen</button>
+    <div class="msg" id="login-msg"></div>
+    <details class="help">
+      <summary>Hoe maak ik een token?</summary>
+      <ol>
+        <li>Ga op GitHub naar Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
+        <li>Repository access: <b>Only select repositories</b> en kies <b>UptimeData</b> en <b>UptimeMonitoring</b>.</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Verder niets.</li>
+        <li>Kies een vervaldatum, maak het token aan en plak het hierboven.</li>
+      </ol>
+    </details>
+  </section>
+
+  <div id="app" class="hidden">
+    <div class="controls">
+      <div class="periods" role="group" aria-label="Welke sites">
+        <button data-scope="all">Alles</button>
+        <button data-scope="klant">Klanten</button>
+        <button data-scope="eigen">Eigen sites</button>
+      </div>
+      <div class="periods" role="group" aria-label="Periode">
+        <button data-period="1">24 uur</button>
+        <button data-period="7">7 dagen</button>
+        <button data-period="30">30 dagen</button>
+        <button data-period="90">90 dagen</button>
+      </div>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <h2>Websites</h2>
+    <div id="board"></div>
+
+    <h2>Storingen</h2>
+    <div class="filters">
+      <label for="f-site">Site</label>
+      <select id="f-site"></select>
+      <label for="f-cat">Soort</label>
+      <select id="f-cat"></select>
+      <span class="spacer"></span>
+      <button id="csv">Download CSV</button>
+    </div>
+    <div class="table-wrap" id="outages"></div>
+
+    <footer id="footer">Een storing telt pas na twee mislukte controles achter elkaar. Losse mislukte metingen zie je als rode streepjes in het lijntje met de responstijd van de laatste 24 uur. Elke balk is één dag.</footer>
+  </div>
 </main>
 
-<script>
-const DAYS = 45;
+<script type="module">
+import { $, esc, errorText, setupLogin } from "./gh.js";
 
-const fmtTime = (iso) => new Date(iso).toLocaleString("nl-NL", {
-  timeZone: "Europe/Amsterdam", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
-});
+// --- soorten storingen ------------------------------------------------------
 
-const sinceText = (iso) => {
-  const mins = Math.round((Date.now() - Date.parse(iso)) / 60000);
-  if (mins < 60) return `${mins} min`;
-  if (mins < 1440) return `${Math.round(mins / 60)} uur`;
-  return `${Math.round(mins / 1440)} dagen`;
+const CATEGORIES = {
+  dns: { label: "DNS", text: "Domeinnaam wijst nergens heen" },
+  connect: { label: "Server onbereikbaar", text: "Geen verbinding met de server" },
+  timeout: { label: "Time-out", text: "Server reageert niet op tijd" },
+  cert: { label: "Certificaat", text: "Probleem met het SSL-certificaat" },
+  server: { label: "Serverfout", text: "Server geeft een 5xx-fout" },
+  http: { label: "HTTP-fout", text: "Server geeft een 4xx-fout" },
+  content: { label: "Inhoud", text: "Pagina laadt, maar de inhoud klopt niet" },
 };
 
-function dayKeys(n) {
-  const out = [];
-  for (let i = n - 1; i >= 0; i--) {
-    out.push(new Date(Date.now() - i * 86400000).toISOString().slice(0, 10));
-  }
-  return out;
+// Oudere metingen hebben nog geen soort; die leiden we af uit de omschrijving.
+function categoryOf(item) {
+  if (item?.category || item?.c) return item.category ?? item.c;
+  const r = item?.reason ?? item?.r ?? "";
+  if (/ENOTFOUND|EAI_AGAIN|DNS/i.test(r)) return "dns";
+  if (/CERT|SSL|TLS|certificaat/i.test(r)) return "cert";
+  if (/^HTTP 5/.test(r)) return "server";
+  if (/^HTTP 4/.test(r)) return "http";
+  if (/tekst|foutmelding/i.test(r)) return "content";
+  if (/geen antwoord/i.test(r)) return "timeout";
+  return "connect";
 }
+const catBadge = (cat) => `<span class="cat ${esc(cat)}" title="${esc(CATEGORIES[cat]?.text ?? "")}">${esc(CATEGORIES[cat]?.label ?? cat)}</span>`;
 
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// --- tijd en getallen ---------------------------------------------------------
 
-const duration = (ms) => {
+const DAY = 86400000;
+const TZ = "Europe/Amsterdam";
+const fmtTime = (iso) => new Date(iso).toLocaleString("nl-NL", { timeZone: TZ, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const fmtFull = (iso) => new Date(iso).toLocaleString("nl-NL", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+// Kort in de tabel: "3 okt 10:01"; het einde op dezelfde dag alleen als tijd.
+function fmtShort(iso, sameDayAs) {
+  const opts = { timeZone: TZ };
+  const day = (t) => new Date(t).toLocaleDateString("nl-NL", { ...opts, day: "numeric", month: "short", year: "2-digit" });
+  const time = new Date(iso).toLocaleTimeString("nl-NL", { ...opts, hour: "2-digit", minute: "2-digit" });
+  if (sameDayAs && day(iso) === day(sameDayAs)) return time;
+  return `${new Date(iso).toLocaleDateString("nl-NL", { ...opts, day: "numeric", month: "short" })} ${time}`;
+}
+const fmtPct = (v) => (v == null ? "—" : `${v.toLocaleString("nl-NL", { maximumFractionDigits: v >= 99.9 && v < 100 ? 3 : 2 })}%`);
+
+function fmtDuration(ms) {
   const mins = Math.max(1, Math.round(ms / 60000));
   if (mins < 60) return `${mins} min`;
-  if (mins < 1440) return `${Math.floor(mins / 60)} u ${mins % 60} min`;
-  return `${Math.round(mins / 1440)} dagen`;
-};
+  const h = Math.floor(mins / 60), m = mins % 60;
+  if (h < 24) return m ? `${h} u ${m} min` : `${h} u`;
+  const d = Math.floor(h / 24), rh = h % 24;
+  return rh ? `${d} d ${rh} u` : `${d} d`;
+}
 
-// Responstijden van de laatste 24 uur als lijntje; rode streepjes zijn mislukte metingen.
+const dayKey = (t) => new Date(t).toISOString().slice(0, 10);
+
+// --- berekeningen -------------------------------------------------------------
+// Uptime: aandeel geslaagde metingen in de periode. Downtime: opgetelde duur van
+// bevestigde storingen (twee of meer mislukte rondes achter elkaar), voor zover
+// die in de periode vallen.
+
+function uptimeFor(history, days) {
+  if (days === 1) {
+    const cutoff = Date.now() - DAY;
+    const pts = (history.recent ?? []).filter((p) => Date.parse(p.t) >= cutoff);
+    return { pct: pts.length ? (pts.filter((p) => p.ok).length / pts.length) * 100 : null, checks: pts.length };
+  }
+  const cutoff = dayKey(Date.now() - (days - 1) * DAY);
+  let up = 0, total = 0;
+  for (const [d, v] of Object.entries(history.daily ?? {})) {
+    if (d >= cutoff) { up += v.up; total += v.total; }
+  }
+  return { pct: total ? (up / total) * 100 : null, checks: total };
+}
+
+function outagesIn(incidents, days) {
+  const from = Date.now() - days * DAY;
+  return (incidents ?? []).filter((i) => (i.end ? Date.parse(i.end) : Date.now()) >= from);
+}
+
+function downtimeIn(incidents, days) {
+  const from = Date.now() - days * DAY;
+  return outagesIn(incidents, days).reduce((sum, i) => {
+    const start = Math.max(Date.parse(i.start), from);
+    const end = i.end ? Date.parse(i.end) : Date.now();
+    return sum + Math.max(0, end - start);
+  }, 0);
+}
+
+function avgResponse(history, days) {
+  if (days === 1) {
+    const cutoff = Date.now() - DAY;
+    const pts = (history.recent ?? []).filter((p) => p.ok && Date.parse(p.t) >= cutoff);
+    return pts.length ? Math.round(pts.reduce((a, p) => a + p.ms, 0) / pts.length) : null;
+  }
+  const cutoff = dayKey(Date.now() - (days - 1) * DAY);
+  let ms = 0, n = 0;
+  for (const [d, v] of Object.entries(history.daily ?? {})) {
+    if (d >= cutoff) { ms += v.msSum ?? 0; n += v.up; }
+  }
+  return n ? Math.round(ms / n) : null;
+}
+
+// --- weergave -----------------------------------------------------------------
+
+let gh = null;
+let data = null;      // { status, histories: { slug: history } }
+let period = 30;
+let scope = "all";    // all | klant | eigen
+let timer = null;
+
+try {
+  period = Number(localStorage.getItem("uptime-period")) || 30;
+  scope = localStorage.getItem("uptime-scope") || "all";
+} catch {}
+
+const groupOf = (m) => (m.group === "eigen" ? "eigen" : "klant");
+const inScope = (m) => scope === "all" || groupOf(m) === scope;
+
+const periodLabel = () => ({ 1: "24 uur", 7: "7 dagen", 30: "30 dagen", 90: "90 dagen" })[period];
+
+function renderBars(daily) {
+  const n = period === 90 ? 90 : 30;
+  const keys = [];
+  for (let i = n - 1; i >= 0; i--) keys.push(dayKey(Date.now() - i * DAY));
+  const bars = keys.map((day) => {
+    const d = daily?.[day];
+    if (!d || !d.total) return `<div class="bar" title="${day}: niet gemeten"></div>`;
+    const pct = (d.up / d.total) * 100;
+    const cls = pct === 100 ? "ok" : pct >= 95 ? "part" : "down";
+    return `<div class="bar ${cls}" title="${day}: ${pct.toFixed(1)}% bereikbaar (${d.total} metingen)"></div>`;
+  }).join("");
+  return `<div class="bars">${bars}</div><div class="axis"><span>${n} dagen geleden</span><span>vandaag</span></div>`;
+}
+
 function renderSpark(recent) {
-  const cutoff = Date.now() - 86400000;
+  const cutoff = Date.now() - DAY;
   const pts = (recent ?? []).filter((p) => Date.parse(p.t) >= cutoff);
   if (pts.length < 2) return "";
   const W = 300, H = 34;
-  const x = (p) => ((Date.parse(p.t) - cutoff) / 86400000) * W;
+  const x = (p) => ((Date.parse(p.t) - cutoff) / DAY) * W;
   const okPts = pts.filter((p) => p.ok);
   const max = Math.max(1000, ...okPts.map((p) => p.ms));
   const y = (ms) => H - 2 - (ms / max) * (H - 6);
   const line = okPts.map((p, i) => `${i ? "L" : "M"}${x(p).toFixed(1)},${y(p.ms).toFixed(1)}`).join("");
   const fails = pts.filter((p) => !p.ok)
     .map((p) => `<path class="fail" d="M${x(p).toFixed(1)},${H - 8}V${H}"><title>${esc(fmtTime(p.t))}: ${esc(p.r ?? "mislukt")}</title></path>`).join("");
-  const avg = okPts.length ? Math.round(okPts.reduce((a, p) => a + p.ms, 0) / okPts.length) : null;
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Responstijd laatste 24 uur${avg ? `, gemiddeld ${avg} ms` : ""}"><path d="${line}"/>${fails}</svg>`;
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Responstijd laatste 24 uur"><path d="${line}"/>${fails}</svg>`;
 }
 
-function renderIncidents(incidents) {
-  const list = (incidents ?? []).slice(-5).reverse();
-  if (!list.length) return "";
-  const items = list.map((i) => {
-    const end = i.end ? Date.parse(i.end) : Date.now();
-    const state = i.end ? duration(end - Date.parse(i.start)) : `loopt nog, ${duration(end - Date.parse(i.start))}`;
-    return `<li>${esc(fmtTime(i.start))} — ${esc(state)} — ${esc(i.reason)}</li>`;
-  }).join("");
-  return `<details class="incidents"><summary>Laatste storingen</summary><ul>${items}</ul></details>`;
+function render() {
+  const { status, histories } = data;
+  const monitors = (status.monitors ?? []).filter(inScope);
+  const active = monitors.filter((m) => !m.paused);
+  const down = active.filter((m) => !m.ok);
+
+  // kop
+  const head = $("headline");
+  head.textContent = !active.length ? "Geen sites"
+    : down.length ? (down.length === 1 ? `${down[0].name} is onbereikbaar` : `${down.length} sites onbereikbaar`)
+    : active.some((m) => m.slow) ? "Alles bereikbaar, iets traag" : "Alles draait";
+  head.style.color = down.length ? "var(--down)" : "";
+  $("subhead").textContent = `Laatst gecontroleerd ${fmtTime(status.generated)}`;
+  document.title = down.length ? `(${down.length}) Uptime · We Changed IT` : "Uptime · We Changed IT";
+
+  for (const b of document.querySelectorAll("[data-period]")) b.setAttribute("aria-pressed", String(Number(b.dataset.period) === period));
+  for (const b of document.querySelectorAll("[data-scope]")) b.setAttribute("aria-pressed", String(b.dataset.scope === scope));
+
+  // kerncijfers
+  let up = 0, checks = 0, downtime = 0, outages = 0;
+  for (const m of active) {
+    const h = histories[m.slug];
+    const u = uptimeFor(h, period);
+    if (u.pct != null) { up += (u.pct / 100) * u.checks; checks += u.checks; }
+    downtime += downtimeIn(h.incidents, period);
+    outages += outagesIn(h.incidents, period).length;
+  }
+  const overall = checks ? (up / checks) * 100 : null;
+  $("tiles").innerHTML = `
+    <div class="tile"><div class="label">Uptime ${periodLabel()}</div><div class="value">${fmtPct(overall)}</div><div class="note">alle sites samen, ${checks.toLocaleString("nl-NL")} metingen</div></div>
+    <div class="tile"><div class="label">Storingen</div><div class="value ${outages ? "bad" : ""}">${outages}</div><div class="note">in ${periodLabel()}</div></div>
+    <div class="tile"><div class="label">Totale downtime</div><div class="value ${downtime ? "bad" : ""}">${downtime ? fmtDuration(downtime) : "0 min"}</div><div class="note">alle sites opgeteld</div></div>
+    <div class="tile"><div class="label">Nu offline</div><div class="value ${down.length ? "bad" : ""}">${down.length}</div><div class="note">van ${active.length} site${active.length === 1 ? "" : "s"}</div></div>`;
+
+  // sites, gegroepeerd: per klant, daarna de eigen sites
+  const groups = new Map();
+  for (const m of monitors) {
+    const key = groupOf(m) === "eigen" ? "\u0000eigen" : (m.client || m.name);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(m);
+  }
+  const keys = [...groups.keys()].sort((a, b) => (a === "\u0000eigen") - (b === "\u0000eigen") || a.localeCompare(b, "nl"));
+  $("board").innerHTML = keys.map((key) => {
+    const list = groups.get(key);
+    const own = key === "\u0000eigen";
+    let gu = 0, gc = 0, gdt = 0;
+    for (const m of list.filter((x) => !x.paused)) {
+      const u = uptimeFor(histories[m.slug], period);
+      if (u.pct != null) { gu += (u.pct / 100) * u.checks; gc += u.checks; }
+      gdt += downtimeIn(histories[m.slug].incidents, period);
+    }
+    const gdown = list.filter((m) => !m.paused && !m.ok).length;
+    return `
+      <div class="group">
+        <div class="group-head">
+          <span class="gname">${own ? "Eigen sites" : esc(key)}</span>
+          <span class="gtype">${own ? "" : "klant · "}${list.length} site${list.length === 1 ? "" : "s"}</span>
+          <span class="gstats">${gdown ? `<span class="bad">${gdown} offline</span> · ` : ""}uptime <b>${fmtPct(gc ? (gu / gc) * 100 : null)}</b> · downtime <b>${gdt ? fmtDuration(gdt) : "0 min"}</b></span>
+        </div>
+        <div class="board">${list.map(siteCard).join("")}</div>
+      </div>`;
+  }).join("") || '<div class="board"><div class="empty">Geen sites in deze selectie. Voeg ze toe via <a href="beheer.html">Sites beheren</a>.</div></div>';
+
+  renderOutages();
 }
 
-function renderBars(daily) {
-  return dayKeys(DAYS).map((day) => {
-    const d = daily?.[day];
-    if (!d || !d.total) return `<div class="bar" title="${day}: niet gemeten"></div>`;
-    const pct = (d.up / d.total) * 100;
-    const cls = pct === 100 ? "ok" : pct >= 95 ? "part" : "down";
-    return `<div class="bar ${cls}" title="${day}: ${pct.toFixed(1)}% bereikbaar"></div>`;
-  }).join("");
+function siteCard(m) {
+  const { histories } = data;
+  const h = histories[m.slug];
+  const u = uptimeFor(h, period);
+  const dt = downtimeIn(h.incidents, period);
+  const n = outagesIn(h.incidents, period).length;
+  const avg = avgResponse(h, period);
+  const dot = m.paused ? "" : m.ok ? (m.slow ? "warn" : "ok") : "down";
+  const state = m.paused ? "gepauzeerd" : m.ok ? `${m.ms} ms${m.slow ? " — traag" : ""}` : "onbereikbaar";
+  const problem = !m.paused && !m.ok
+    ? `<div class="problem">${catBadge(categoryOf(m))} ${esc(m.reason ?? "onbereikbaar")} <span class="since">— sinds ${esc(fmtTime(m.since))} (${fmtDuration(Date.now() - Date.parse(m.since))})</span></div>`
+    : "";
+  const cert = m.cert
+    ? (m.cert.daysLeft <= 14
+        ? `<span class="warn">certificaat verloopt over ${m.cert.daysLeft} dagen (${esc(m.cert.validTo)})</span>`
+        : `<span title="${esc(m.cert.issuer ?? "")}">certificaat geldig tot <b>${esc(m.cert.validTo)}</b></span>`)
+    : "";
+  return `
+    <div class="site">
+      <div class="head">
+        <span class="dot ${dot}"></span>
+        <span class="name"><a href="${esc(m.url)}" rel="noopener" target="_blank">${esc(m.name)}</a></span>
+        <span class="state ${!m.paused && !m.ok ? "bad" : ""}">${state}</span>
+      </div>
+      ${problem}
+      ${renderBars(h.daily)}
+      ${renderSpark(h.recent)}
+      <div class="meta">
+        <span>uptime ${periodLabel()} <b>${fmtPct(u.pct)}</b></span>
+        <span>storingen <b>${n}</b></span>
+        <span>downtime <b>${dt ? fmtDuration(dt) : "0 min"}</b></span>
+        ${avg ? `<span>gem. responstijd <b>${avg} ms</b></span>` : ""}
+        ${cert ? `<span>${cert}</span>` : ""}
+      </div>
+    </div>`;
 }
 
-async function load() {
-  let status;
-  try {
-    status = await (await fetch("./status.json?" + Date.now())).json();
-  } catch {
-    document.getElementById("headline").textContent = "Nog geen metingen";
-    document.getElementById("subhead").textContent = "De eerste controle draait binnen een paar minuten. Start hem desnoods handmatig via het tabblad Actions.";
-    document.getElementById("board").innerHTML = '<div class="empty">Zodra de workflow een keer gedraaid heeft, staan je sites hier.</div>';
+function allOutages() {
+  const { status, histories } = data;
+  const bySlug = Object.fromEntries((status.monitors ?? []).map((m) => [m.slug, m]));
+  const rows = [];
+  for (const [slug, h] of Object.entries(histories)) {
+    const m = bySlug[slug];
+    if (!m || !inScope(m)) continue;
+    for (const i of h.incidents ?? []) rows.push({ ...i, slug, site: m.name, client: groupOf(m) === "eigen" ? "Eigen site" : (m.client || ""), category: categoryOf(i) });
+  }
+  // lopende storingen bovenaan, daarna nieuwste eerst
+  return rows.sort((a, b) => ((b.end === null) - (a.end === null)) || (Date.parse(b.start) - Date.parse(a.start)));
+}
+
+function filteredOutages() {
+  const site = $("f-site").value, cat = $("f-cat").value;
+  const from = Date.now() - period * DAY;
+  return allOutages().filter((o) =>
+    (!site || o.slug === site) && (!cat || o.category === cat) && (o.end ? Date.parse(o.end) : Date.now()) >= from);
+}
+
+function renderOutages() {
+  // filterkeuzes bijwerken, huidige keuze behouden
+  const siteSel = $("f-site"), catSel = $("f-cat");
+  const keepSite = siteSel.value, keepCat = catSel.value;
+  siteSel.innerHTML = '<option value="">Alle sites</option>' + (data.status.monitors ?? []).filter(inScope)
+    .map((m) => `<option value="${esc(m.slug)}">${esc(m.name)}</option>`).join("");
+  catSel.innerHTML = '<option value="">Alle soorten</option>' + Object.entries(CATEGORIES)
+    .map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join("");
+  siteSel.value = [...siteSel.options].some((o) => o.value === keepSite) ? keepSite : "";
+  catSel.value = keepCat;
+
+  const rows = filteredOutages();
+  $("csv").disabled = !rows.length;
+  if (!rows.length) {
+    $("outages").innerHTML = `<div class="empty">Geen storingen in de afgelopen ${periodLabel()}.</div>`;
     return;
   }
-
-  if (status.title) document.title = status.title;
-  const monitors = status.monitors ?? [];
-  const down = monitors.filter((m) => !m.ok && !m.paused);
-  const slow = monitors.filter((m) => m.ok && m.slow && !m.paused);
-  const head = document.getElementById("headline");
-
-  if (down.length) {
-    head.textContent = down.length === 1 ? `${down[0].name} is onbereikbaar` : `${down.length} sites onbereikbaar`;
-    head.style.color = "var(--down)";
-  } else if (slow.length) {
-    head.textContent = "Alles bereikbaar, iets traag";
-  } else {
-    head.textContent = "Alles draait";
-  }
-  document.getElementById("subhead").textContent = `Laatst gecontroleerd ${fmtTime(status.generated)}`;
-
-  const histories = await Promise.all(monitors.map(async (m) => {
-    try { return await (await fetch(`./history/${m.slug}.json?` + Date.now())).json(); }
-    catch { return {}; }
-  }));
-
-  document.getElementById("board").innerHTML = monitors.map((m, i) => {
-    const dot = m.paused ? "paused" : m.ok ? (m.slow ? "warn" : "ok") : "down";
-    const timing = m.paused
-      ? "gepauzeerd"
-      : m.ok
-        ? `${m.ms} ms${m.slow ? " — traag" : ""}`
-        : `${esc(m.reason ?? "onbereikbaar")} — al ${sinceText(m.since)}`;
-    const up = m.uptime ?? {};
-    const cert = m.cert
-      ? (m.cert.daysLeft <= 14
-          ? `<span class="cert-warn">certificaat verloopt over ${m.cert.daysLeft} dagen</span>`
-          : `certificaat nog <b>${m.cert.daysLeft}</b> dagen geldig`)
-      : "";
-    return `
-      <div class="site">
-        <div class="head">
-          <span class="dot ${dot}"></span>
-          <span class="name"><a href="${esc(m.url)}" rel="noopener">${esc(m.name)}</a></span>
-          <span class="timing ${m.ok || m.paused ? "" : "bad"}">${timing}</span>
-        </div>
-        <div class="bars">${renderBars(histories[i].daily)}</div>
-        ${renderSpark(histories[i].recent)}
-        <div class="meta">
-          <span>24 uur <b>${up.d1 ?? "—"}%</b></span>
-          <span>7 dagen <b>${up.d7 ?? "—"}%</b></span>
-          <span>30 dagen <b>${up.d30 ?? "—"}%</b></span>
-          ${cert ? `<span>${cert}</span>` : ""}
-        </div>
-        ${renderIncidents(histories[i].incidents)}
-      </div>`;
-  }).join("");
-
-  document.getElementById("footer").textContent =
-    `Elke balk is één dag, oudste links. Het lijntje is de responstijd van de laatste 24 uur, rode streepjes zijn mislukte metingen. Controle draait via GitHub Actions, elke 5 minuten.`;
+  $("outages").innerHTML = `
+    <table class="outages">
+      <thead><tr><th>Site</th><th>Soort</th><th>Begin</th><th>Einde</th><th>Duur</th><th>Oorzaak</th></tr></thead>
+      <tbody>${rows.map((o) => {
+        const end = o.end ? Date.parse(o.end) : Date.now();
+        return `
+        <tr class="${o.end ? "" : "ongoing"}">
+          <td><b>${esc(o.site)}</b>${o.client && o.client !== o.site ? `<span class="also">${esc(o.client)}</span>` : ""}</td>
+          <td>${catBadge(o.category)}</td>
+          <td class="nowrap" data-label="Begin">${esc(fmtShort(o.start))}</td>
+          <td class="nowrap" data-label="Einde">${o.end ? esc(fmtShort(o.end, o.start)) : "<b>loopt nog</b>"}</td>
+          <td class="nowrap" data-label="Duur">${fmtDuration(end - Date.parse(o.start))}</td>
+          <td class="cause">${esc(o.reason)}${o.also?.length ? `<span class="also">daarna ook: ${o.also.map(esc).join("; ")}</span>` : ""}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table>`;
 }
 
-load();
-setInterval(load, 60000);
+function downloadCsv() {
+  const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [["Site", "Klant", "Soort", "Begin", "Einde", "Duur (minuten)", "Oorzaak"].join(";")];
+  for (const o of filteredOutages()) {
+    const end = o.end ? Date.parse(o.end) : Date.now();
+    lines.push([o.site, o.client, CATEGORIES[o.category]?.label ?? o.category, fmtFull(o.start), o.end ? fmtFull(o.end) : "loopt nog",
+      Math.round((end - Date.parse(o.start)) / 60000), [o.reason, ...(o.also ?? [])].join(" / ")].map(q).join(";"));
+  }
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `storingen-${dayKey(Date.now())}.csv` });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// --- gegevens ophalen -----------------------------------------------------------
+
+async function load() {
+  const { json: status } = await gh.readJson("docs/status.json");
+  const entries = await Promise.all((status.monitors ?? []).map(async (m) => {
+    try { return [m.slug, (await gh.readJson(`docs/history/${m.slug}.json`)).json]; }
+    catch { return [m.slug, { recent: [], daily: {}, incidents: [] }]; }
+  }));
+  data = { status, histories: Object.fromEntries(entries) };
+  render();
+}
+
+async function refresh() {
+  try { await load(); }
+  catch (err) { $("subhead").textContent = `Bijwerken mislukt: ${errorText(err, gh?.repo)}`; }
+}
+
+for (const b of document.querySelectorAll("[data-period]")) {
+  b.addEventListener("click", () => {
+    period = Number(b.dataset.period);
+    try { localStorage.setItem("uptime-period", String(period)); } catch {}
+    if (data) render();
+  });
+}
+for (const b of document.querySelectorAll("[data-scope]")) {
+  b.addEventListener("click", () => {
+    scope = b.dataset.scope;
+    try { localStorage.setItem("uptime-scope", scope); } catch {}
+    if (data) render();
+  });
+}
+$("f-site").addEventListener("change", renderOutages);
+$("f-cat").addEventListener("change", renderOutages);
+$("csv").addEventListener("click", downloadCsv);
+
+setupLogin({
+  async onLogin(client) {
+    gh = client;
+    $("subhead").textContent = "Gegevens laden…";
+    try {
+      await load();
+    } catch (err) {
+      $("login").classList.remove("hidden");
+      $("login-msg").className = "msg err";
+      $("login-msg").textContent = errorText(err, gh.repo);
+      $("subhead").textContent = "Log in om de status van je websites te zien.";
+      return;
+    }
+    $("app").classList.remove("hidden");
+    $("nav").classList.remove("hidden");
+    clearInterval(timer);
+    timer = setInterval(refresh, 120000);
+  },
+  onLogout() {
+    clearInterval(timer);
+    gh = data = null;
+    $("app").classList.add("hidden");
+    $("nav").classList.add("hidden");
+    $("headline").textContent = "Status";
+    $("headline").style.color = "";
+    $("subhead").textContent = "Log in om de status van je websites te zien.";
+  },
+});
 </script>
 </body>
 </html>

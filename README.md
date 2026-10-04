@@ -74,6 +74,29 @@ daarvoor de beheerpagina (zie hieronder).
 Settings → Pages → Source: *Deploy from a branch*, branch `main`, map `/docs`.
 Na een minuut staat je overzicht op `https://<gebruikersnaam>.github.io/uptime/`.
 
+**Inloggen en privé gegevens.** De statuspagina en de beheerpagina vragen om
+een GitHub-token. De gegevens (sitelijst, status, storingen) horen in een
+aparte **privé** repository `UptimeData`, zodat niemand ze zonder login kan
+inzien. Eenmalig instellen:
+
+1. Maak op GitHub een lege, **private** repository `UptimeData` (zonder README).
+2. Maak een fine-grained token met alleen toegang tot `UptimeData` en
+   *Contents: Read and write*. Zet het in deze repository als secret
+   `DATA_TOKEN`.
+3. Geef je eigen inlogtoken toegang tot `UptimeData` én `UptimeMonitoring`.
+
+Bij de eerste run daarna verhuizen de gegevens automatisch en verdwijnen ze uit
+deze openbare repository. Zonder `DATA_TOKEN` blijft alles hier staan.
+
+**Klanten en eigen sites.** Geef per site aan of het een klantsite of een eigen
+site is (`"group": "klant"` of `"eigen"`) en bij klanten de naam (`"client"`).
+Het dashboard groepeert daarop en kan filteren op klanten of eigen sites.
+
+**Oorzaak van een storing.** Lukt een controle niet, dan zoekt de monitor uit
+waar het misgaat: DNS, verbinding met de server, SSL-certificaat, een fout van
+de server (5xx/4xx) of verkeerde inhoud. Dat staat als label en uitleg bij de
+storing.
+
 **Beheerpagina.** Op `https://<gebruikersnaam>.github.io/uptime/beheer.html`
 voeg je sites toe, pas je ze aan, pauzeer je ze of haal je ze weg. Elke
 wijziging wordt een commit op `monitors.json` en is binnen 5 minuten actief.

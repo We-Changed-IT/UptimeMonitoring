@@ -42,4 +42,6 @@ jobs:
           MAIL_USER: ${{ secrets.MAIL_USER }}
           MAIL_PASS: ${{ secrets.MAIL_PASS }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
+          DATA_TOKEN: ${{ secrets.DATA_TOKEN }}
+          DATA_REPO: ${{ vars.DATA_REPO }}
         run: scripts/run.sh

@@ -1,5 +1,5 @@
 {
-  "title": "Statusoverzicht",
+  "title": "We Changed IT",
   "monitors": [
     {
       "name": "BPCF",
@@ -7,7 +7,9 @@
       "mustNotContain": [
         "Fatal error",
         "Database connection"
-      ]
+      ],
+      "group": "klant",
+      "client": "BPCF"
     },
     {
       "name": "Je Grote Dag",
@@ -15,14 +17,79 @@
       "mustNotContain": [
         "Fatal error",
         "An unexpected error occurred"
-      ]
+      ],
+      "group": "klant",
+      "client": "Je Grote Dag"
     },
     {
       "name": "Sint en Piet inhuren",
       "url": "https://sintenpietinhuren.nl/",
       "mustNotContain": [
         "Fatal error"
-      ]
+      ],
+      "group": "eigen"
+    },
+    {
+      "name": "Brouwers Infra (app)",
+      "url": "https://brouwersinfra.app/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "Brouwers Infra"
+    },
+    {
+      "name": "Brouwers Infra",
+      "url": "https://brouwersinfra.nl/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "Brouwers Infra"
+    },
+    {
+      "name": "Check my IP address",
+      "url": "https://check-my-ip-address.online/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "eigen"
+    },
+    {
+      "name": "KW Advies",
+      "url": "https://kw-advies.nl/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "KW Advies"
+    },
+    {
+      "name": "Biesbroek Bouw",
+      "url": "https://biesbroekbouw.nl/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "Biesbroek"
+    },
+    {
+      "name": "Biesbroek Schroeffundamenten",
+      "url": "https://biesbroekschroeffundamenten.nl/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "Biesbroek"
+    },
+    {
+      "name": "Bijna af",
+      "url": "https://bijna-af.nu/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "klant",
+      "client": "Bijna af"
     }
   ]
 }
