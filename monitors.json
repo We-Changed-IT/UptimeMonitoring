@@ -27,7 +27,8 @@
       "mustNotContain": [
         "Fatal error"
       ],
-      "group": "eigen"
+      "group": "klant",
+      "client": "Sint en Piet inhuren"
     },
     {
       "name": "Brouwers Infra (app)",
