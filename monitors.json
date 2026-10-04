@@ -89,8 +89,15 @@
       "mustNotContain": [
         "Fatal error"
       ],
-      "group": "klant",
-      "client": "Bijna af"
+      "group": "eigen"
+    },
+    {
+      "name": "We Changed IT",
+      "url": "https://wechangedit.nl/",
+      "mustNotContain": [
+        "Fatal error"
+      ],
+      "group": "eigen"
     }
   ]
 }
