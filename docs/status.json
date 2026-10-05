@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-05T04:06:25.146Z",
+  "generated": "2026-10-05T04:11:25.246Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 612,
+      "ms": 741,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-05T03:26:25.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-05T04:06:25.146Z",
+      "checkedAt": "2026-10-05T04:11:25.246Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 37,
@@ -23,9 +23,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 75.13,
-        "d7": 93.03,
-        "d30": 93.18
+        "d1": 75.26,
+        "d7": 93.04,
+        "d30": 93.19
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 540,
+      "ms": 1453,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-05T03:26:25.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-05T04:06:25.146Z",
+      "checkedAt": "2026-10-05T04:11:25.246Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 70,
@@ -49,9 +49,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 75.13,
-        "d7": 93.03,
-        "d30": 93.3
+        "d1": 75.26,
+        "d7": 93.04,
+        "d30": 93.31
       }
     },
     {
@@ -60,14 +60,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 801,
+      "ms": 248,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-05T04:06:25.146Z",
+      "checkedAt": "2026-10-05T04:11:25.246Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 81,
