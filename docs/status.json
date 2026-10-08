@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-08T10:17:49.396Z",
+  "generated": "2026-10-08T10:22:49.139Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,23 +8,19 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 849,
+      "ms": 670,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-05T03:26:25.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-08T10:17:49.396Z",
-      "cert": {
-        "validTo": "2026-11-12",
-        "daysLeft": 34,
-        "issuer": "Let's Encrypt"
-      },
+      "checkedAt": "2026-10-08T10:22:49.139Z",
+      "cert": null,
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 93.62,
+        "d7": 93.63,
         "d30": 95.36
       }
     },
@@ -32,20 +28,24 @@
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
       "url": "https://www.jegrotedag.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 253,
+      "ok": true,
+      "code": 200,
+      "ms": 639,
       "slow": false,
-      "reason": "verbinding verloopt (ETIMEDOUT)",
+      "reason": null,
       "flaky": false,
-      "since": "2026-10-08T10:17:49.396Z",
-      "failCount": 1,
+      "since": "2026-10-08T10:22:49.139Z",
+      "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-08T10:17:49.396Z",
-      "cert": null,
+      "checkedAt": "2026-10-08T10:22:49.139Z",
+      "cert": {
+        "validTo": "2026-12-14",
+        "daysLeft": 67,
+        "issuer": "Let's Encrypt"
+      },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 99.22,
+        "d1": 99.23,
         "d7": 93.5,
         "d30": 95.36
       }
@@ -56,14 +56,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 372,
+      "ms": 399,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-08T10:17:49.396Z",
+      "checkedAt": "2026-10-08T10:22:49.139Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 78,
