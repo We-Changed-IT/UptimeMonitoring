@@ -1,83 +1,352 @@
 {
-  "title": "Statusoverzicht",
-  "generated": "2026-10-09T23:26:22.273Z",
+  "title": "We Changed IT",
+  "generated": "2026-10-09T23:31:22.545Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
+      "group": "klant",
+      "client": "BPCF",
       "ok": true,
       "code": 200,
-      "ms": 673,
+      "ms": 1269,
       "slow": false,
       "reason": null,
+      "category": null,
+      "ip": null,
       "flaky": false,
       "since": "2026-10-05T03:26:25.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T23:26:22.273Z",
+      "checkedAt": "2026-10-09T23:31:22.545Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 33,
-        "issuer": "Let's Encrypt"
+        "issuer": "Let's Encrypt",
+        "subject": "bpcf.nl"
       },
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 94.22,
-        "d30": 95.96
+        "d7": 94.23,
+        "d30": 95.97,
+        "d90": 95.97
       }
     },
     {
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
       "url": "https://www.jegrotedag.nl/",
+      "group": "klant",
+      "client": "Je Grote Dag",
       "ok": true,
       "code": 200,
-      "ms": 1389,
+      "ms": 633,
       "slow": false,
       "reason": null,
+      "category": null,
+      "ip": null,
       "flaky": false,
       "since": "2026-10-08T10:22:49.139Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T23:26:22.273Z",
+      "checkedAt": "2026-10-09T23:31:22.545Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 65,
-        "issuer": "Let's Encrypt"
+        "issuer": "Let's Encrypt",
+        "subject": "jegrotedag.nl"
       },
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
         "d7": 94.11,
-        "d30": 95.96
+        "d30": 95.97,
+        "d90": 95.97
       }
     },
     {
       "slug": "sint-en-piet-inhuren",
       "name": "Sint en Piet inhuren",
       "url": "https://sintenpietinhuren.nl/",
+      "group": "klant",
+      "client": "Sint en Piet inhuren",
       "ok": true,
       "code": 200,
-      "ms": 324,
+      "ms": 235,
       "slow": false,
       "reason": null,
+      "category": null,
+      "ip": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T23:26:22.273Z",
+      "checkedAt": "2026-10-09T23:31:22.545Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 76,
-        "issuer": "Let's Encrypt"
+        "issuer": "Let's Encrypt",
+        "subject": "sintenpietinhuren.nl"
       },
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
         "d7": 100,
-        "d30": 100
+        "d30": 100,
+        "d90": 100
+      }
+    },
+    {
+      "slug": "brouwers-infra-app",
+      "name": "Brouwers Infra (app)",
+      "url": "https://brouwersinfra.app/",
+      "group": "klant",
+      "client": "Brouwers Infra",
+      "ok": false,
+      "code": 0,
+      "ms": 32,
+      "slow": false,
+      "reason": "DNS: brouwersinfra.app bestaat niet of heeft geen IP-adres (ENOTFOUND)",
+      "category": "dns",
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 1,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": null,
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0,
+        "d90": 0
+      }
+    },
+    {
+      "slug": "brouwers-infra",
+      "name": "Brouwers Infra",
+      "url": "https://brouwersinfra.nl/",
+      "group": "klant",
+      "client": "Brouwers Infra",
+      "ok": false,
+      "code": 0,
+      "ms": 300,
+      "slow": false,
+      "reason": "SSL-certificaat hoort bij een ander domein (ERR_TLS_CERT_ALTNAME_INVALID) — voor *.zxcs.nl, uitgegeven door Sectigo Limited, geldig tot 2027-04-03",
+      "category": "cert",
+      "ip": "185.104.29.4",
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 1,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2027-04-03",
+        "daysLeft": 176,
+        "issuer": "Sectigo Limited",
+        "subject": "*.zxcs.nl"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0,
+        "d90": 0
+      }
+    },
+    {
+      "slug": "check-my-ip-address",
+      "name": "Check my IP address",
+      "url": "https://check-my-ip-address.online/",
+      "group": "eigen",
+      "client": null,
+      "ok": false,
+      "code": 0,
+      "ms": 304,
+      "slow": false,
+      "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor TRAEFIK DEFAULT CERT, uitgegeven door TRAEFIK DEFAULT CERT, geldig tot 2027-09-06",
+      "category": "cert",
+      "ip": "93.114.128.85",
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 1,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2027-09-06",
+        "daysLeft": 331,
+        "issuer": "TRAEFIK DEFAULT CERT",
+        "subject": "TRAEFIK DEFAULT CERT"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0,
+        "d90": 0
+      }
+    },
+    {
+      "slug": "kw-advies",
+      "name": "KW Advies",
+      "url": "https://kw-advies.nl/",
+      "group": "klant",
+      "client": "KW Advies",
+      "ok": false,
+      "code": 0,
+      "ms": 439,
+      "slow": false,
+      "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor localhost, uitgegeven door localhost, geldig tot 2029-10-29",
+      "category": "cert",
+      "ip": "185.104.28.238",
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 1,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2029-10-29",
+        "daysLeft": 1115,
+        "issuer": "localhost",
+        "subject": "localhost"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0,
+        "d90": 0
+      }
+    },
+    {
+      "slug": "biesbroek-bouw",
+      "name": "Biesbroek Bouw",
+      "url": "https://biesbroekbouw.nl/",
+      "group": "klant",
+      "client": "Biesbroek",
+      "ok": true,
+      "code": 200,
+      "ms": 1260,
+      "slow": false,
+      "reason": null,
+      "category": null,
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2027-01-05",
+        "daysLeft": 87,
+        "issuer": "Let's Encrypt",
+        "subject": "biesbroekbouw.nl"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
+      }
+    },
+    {
+      "slug": "biesbroek-schroeffundamenten",
+      "name": "Biesbroek Schroeffundamenten",
+      "url": "https://biesbroekschroeffundamenten.nl/",
+      "group": "klant",
+      "client": "Biesbroek",
+      "ok": true,
+      "code": 200,
+      "ms": 161,
+      "slow": false,
+      "reason": null,
+      "category": null,
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2027-01-05",
+        "daysLeft": 87,
+        "issuer": "Let's Encrypt",
+        "subject": "biesbroekschroeffundamenten.nl"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
+      }
+    },
+    {
+      "slug": "bijna-af",
+      "name": "Bijna af",
+      "url": "https://bijna-af.nu/",
+      "group": "eigen",
+      "client": null,
+      "ok": false,
+      "code": 0,
+      "ms": 467,
+      "slow": false,
+      "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor localhost, uitgegeven door localhost, geldig tot 2029-10-29",
+      "category": "cert",
+      "ip": "185.104.28.238",
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 1,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2029-10-29",
+        "daysLeft": 1115,
+        "issuer": "localhost",
+        "subject": "localhost"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0,
+        "d90": 0
+      }
+    },
+    {
+      "slug": "we-changed-it",
+      "name": "We Changed IT",
+      "url": "https://wechangedit.nl/",
+      "group": "eigen",
+      "client": null,
+      "ok": true,
+      "code": 200,
+      "ms": 494,
+      "slow": false,
+      "reason": null,
+      "category": null,
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-09T23:31:22.545Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-09T23:31:22.545Z",
+      "cert": {
+        "validTo": "2026-12-01",
+        "daysLeft": 52,
+        "issuer": "Let's Encrypt",
+        "subject": "wechangedit.nl"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
       }
     }
   ]

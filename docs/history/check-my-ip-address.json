@@ -1,0 +1,1 @@
+{"recent":[{"t":"2026-10-09T23:31:22.545Z","ok":0,"ms":304,"code":0,"r":"SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor TRAEFIK DEFAULT CERT, uitgegeven door TRAEFIK DEFAULT CERT, geldig tot 2027-09-06","c":"cert"}],"daily":{"2026-10-09":{"up":0,"total":1,"msSum":0}},"incidents":[]}
