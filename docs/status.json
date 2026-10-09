@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-09T05:10:38.264Z",
+  "generated": "2026-10-09T05:15:38.827Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 498,
+      "ms": 598,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-05T03:26:25.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T05:10:38.264Z",
+      "checkedAt": "2026-10-09T05:15:38.827Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 33,
@@ -25,7 +25,7 @@
       "uptime": {
         "d1": 100,
         "d7": 93.58,
-        "d30": 95.68
+        "d30": 95.69
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 527,
+      "ms": 438,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-10-08T10:22:49.139Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T05:10:38.264Z",
+      "checkedAt": "2026-10-09T05:15:38.827Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 66,
@@ -50,8 +50,8 @@
       "certAlertedOn": null,
       "uptime": {
         "d1": 99.16,
-        "d7": 93.45,
-        "d30": 95.68
+        "d7": 93.46,
+        "d30": 95.69
       }
     },
     {
@@ -60,14 +60,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 703,
+      "ms": 338,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-09T05:10:38.264Z",
+      "checkedAt": "2026-10-09T05:15:38.827Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 77,
