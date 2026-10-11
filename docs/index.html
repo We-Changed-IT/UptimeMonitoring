@@ -135,6 +135,20 @@
   .cat.cert { border-color: #ecd3a6; background: #fdf6e9; }
   .cat.server, .cat.http { border-color: #c6d4e8; background: #eff4fa; }
   .cat.content { border-color: #cfe0d6; background: #f0f7f3; }
+  .cat.mail { border-color: #c6d4e8; background: #eff4fa; }
+  .cat.domein { border-color: #c9b8e0; background: #f4effa; }
+
+  /* soort test, uitleg en waarschuwingen per monitor */
+  .type { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand); border: 1px solid var(--rule); border-radius: 3px; padding: 0 5px; align-self: center; white-space: nowrap; }
+  .target { margin: 2px 0 0 19px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .tested { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0 0 19px; font-size: 13px; color: var(--muted); }
+  .tested b { font-weight: 500; color: var(--ink); }
+  .tested .yes { color: var(--ok); font-weight: 600; }
+  .tested .no { color: var(--warn); font-weight: 600; }
+  .tested .item { white-space: nowrap; }
+  .tested .wrap { white-space: normal; overflow-wrap: anywhere; }
+  .warnings { margin: 8px 0 0 19px; padding: 0; list-style: none; font-size: 14px; color: var(--warn); }
+  .warnings li::before { content: "⚠ "; }
 
   /* storingslijst */
   .filters { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
@@ -166,12 +180,12 @@
   <div class="brandbar">
     <a class="logo" href="./" aria-label="We Changed IT">We <span class="g">Ch</span><span class="at">a</span><span class="g">nged</span> IT</a>
     <span class="product">Uptime monitor</span>
-    <nav id="nav" class="hidden"><a href="beheer.html">Sites beheren</a><a href="#" data-logout>Uitloggen</a></nav>
+    <nav id="nav" class="hidden"><a href="beheer.html">Beheren</a><a href="#" data-logout>Uitloggen</a></nav>
   </div>
   <div class="top">
     <h1 id="headline">Status</h1>
   </div>
-  <p class="sub" id="subhead">Log in om de status van je websites te zien.</p>
+  <p class="sub" id="subhead">Log in om de status van je websites en diensten te zien.</p>
 
   <section class="panel" id="login">
     <label for="token">GitHub-token <span class="hint">— wordt alleen in deze browser bewaard</span></label>
@@ -195,7 +209,7 @@
       <div class="periods" role="group" aria-label="Welke sites">
         <button data-scope="all">Alles</button>
         <button data-scope="klant">Klanten</button>
-        <button data-scope="eigen">Eigen sites</button>
+        <button data-scope="eigen">Eigen</button>
       </div>
       <div class="periods" role="group" aria-label="Periode">
         <button data-period="1">24 uur</button>
@@ -207,12 +221,12 @@
 
     <div class="tiles" id="tiles"></div>
 
-    <h2>Websites</h2>
+    <h2>Monitors</h2>
     <div id="board"></div>
 
     <h2>Storingen</h2>
     <div class="filters">
-      <label for="f-site">Site</label>
+      <label for="f-site">Monitor</label>
       <select id="f-site"></select>
       <label for="f-cat">Soort</label>
       <select id="f-cat"></select>
@@ -221,7 +235,7 @@
     </div>
     <div class="table-wrap" id="outages"></div>
 
-    <footer id="footer">Een storing telt pas na twee mislukte controles achter elkaar. Losse mislukte metingen zie je als rode streepjes in het lijntje met de responstijd van de laatste 24 uur. Elke balk is één dag.</footer>
+    <footer id="footer">Een storing telt pas na twee mislukte controles achter elkaar. Oranje waarschuwingen (bijv. een ontbrekend DKIM-record of een domein dat binnenkort verloopt) zijn geen storing. Losse mislukte metingen zie je als rode streepjes in het lijntje met de responstijd van de laatste 24 uur. Elke balk is één dag.</footer>
   </div>
 </main>
 
@@ -238,7 +252,17 @@ const CATEGORIES = {
   server: { label: "Serverfout", text: "Server geeft een 5xx-fout" },
   http: { label: "HTTP-fout", text: "Server geeft een 4xx-fout" },
   content: { label: "Inhoud", text: "Pagina laadt, maar de inhoud klopt niet" },
+  mail: { label: "Mail", text: "MX-record ontbreekt, wijst naar de verkeerde provider of de mailserver is niet te vinden" },
+  domein: { label: "Domein", text: "Domein niet (actief) geregistreerd of zonder nameservers" },
 };
+
+// --- soorten tests ------------------------------------------------------------
+
+const TYPES = { website: "Website", mail: "Mail", domein: "Domein", dns: "DNS", poort: "Poort" };
+const PROVIDERS = { microsoft365: "Microsoft 365", google: "Google Workspace", overig: "overige provider" };
+const typeOf = (m) => (TYPES[m?.type] ? m.type : "website");
+// Websites en poorten zijn "onbereikbaar", bij mail, domein en DNS "storing".
+const isReach = (m) => ["website", "poort"].includes(typeOf(m));
 
 // Oudere metingen hebben nog geen soort; die leiden we af uit de omschrijving.
 function categoryOf(item) {
@@ -383,8 +407,10 @@ function render() {
 
   // kop
   const head = $("headline");
-  head.textContent = !active.length ? "Geen sites"
-    : down.length ? (down.length === 1 ? `${down[0].name} is onbereikbaar` : `${down.length} sites onbereikbaar`)
+  const warned = active.filter((m) => m.warnings?.length);
+  head.textContent = !active.length ? "Geen monitors"
+    : down.length ? (down.length === 1 ? `${down[0].name} ${isReach(down[0]) ? "is onbereikbaar" : "heeft een storing"}` : `${down.length} storingen`)
+    : warned.length ? `Alles werkt, ${warned.length} met een waarschuwing`
     : active.some((m) => m.slow) ? "Alles bereikbaar, iets traag" : "Alles draait";
   head.style.color = down.length ? "var(--down)" : "";
   $("subhead").textContent = `Laatst gecontroleerd ${fmtTime(status.generated)}`;
@@ -404,10 +430,10 @@ function render() {
   }
   const overall = checks ? (up / checks) * 100 : null;
   $("tiles").innerHTML = `
-    <div class="tile"><div class="label">Uptime ${periodLabel()}</div><div class="value">${fmtPct(overall)}</div><div class="note">alle sites samen, ${checks.toLocaleString("nl-NL")} metingen</div></div>
+    <div class="tile"><div class="label">Uptime ${periodLabel()}</div><div class="value">${fmtPct(overall)}</div><div class="note">alles samen, ${checks.toLocaleString("nl-NL")} metingen</div></div>
     <div class="tile"><div class="label">Storingen</div><div class="value ${outages ? "bad" : ""}">${outages}</div><div class="note">in ${periodLabel()}</div></div>
-    <div class="tile"><div class="label">Totale downtime</div><div class="value ${downtime ? "bad" : ""}">${downtime ? fmtDuration(downtime) : "0 min"}</div><div class="note">alle sites opgeteld</div></div>
-    <div class="tile"><div class="label">Nu offline</div><div class="value ${down.length ? "bad" : ""}">${down.length}</div><div class="note">van ${active.length} site${active.length === 1 ? "" : "s"}</div></div>`;
+    <div class="tile"><div class="label">Totale downtime</div><div class="value ${downtime ? "bad" : ""}">${downtime ? fmtDuration(downtime) : "0 min"}</div><div class="note">alles opgeteld</div></div>
+    <div class="tile"><div class="label">Nu storing</div><div class="value ${down.length ? "bad" : ""}">${down.length}</div><div class="note">van ${active.length} monitor${active.length === 1 ? "" : "s"}</div></div>`;
 
   // sites, gegroepeerd: per klant, daarna de eigen sites
   const groups = new Map();
@@ -431,48 +457,107 @@ function render() {
       <div class="group">
         <div class="group-head">
           <span class="gname">${own ? "Eigen sites" : esc(key)}</span>
-          <span class="gtype">${own ? "" : "klant · "}${list.length} site${list.length === 1 ? "" : "s"}</span>
-          <span class="gstats">${gdown ? `<span class="bad">${gdown} offline</span> · ` : ""}uptime <b>${fmtPct(gc ? (gu / gc) * 100 : null)}</b> · downtime <b>${gdt ? fmtDuration(gdt) : "0 min"}</b></span>
+          <span class="gtype">${own ? "" : "klant · "}${typeSummary(list)}</span>
+          <span class="gstats">${gdown ? `<span class="bad">${gdown} storing${gdown === 1 ? "" : "en"}</span> · ` : ""}uptime <b>${fmtPct(gc ? (gu / gc) * 100 : null)}</b> · downtime <b>${gdt ? fmtDuration(gdt) : "0 min"}</b></span>
         </div>
         <div class="board">${list.map(siteCard).join("")}</div>
       </div>`;
-  }).join("") || '<div class="board"><div class="empty">Geen sites in deze selectie. Voeg ze toe via <a href="beheer.html">Sites beheren</a>.</div></div>';
+  }).join("") || '<div class="board"><div class="empty">Niets in deze selectie. Voeg monitors toe via <a href="beheer.html">Beheren</a>.</div></div>';
 
   renderOutages();
+}
+
+// "2 websites · 1 mail · 1 domein"
+function typeSummary(list) {
+  const n = {};
+  for (const m of list) n[typeOf(m)] = (n[typeOf(m)] ?? 0) + 1;
+  const word = { website: ["website", "websites"], mail: ["mail", "mail"], domein: ["domein", "domeinen"], dns: ["DNS-record", "DNS-records"], poort: ["poort", "poorten"] };
+  return Object.keys(TYPES).filter((t) => n[t]).map((t) => `${n[t]} ${word[t][n[t] === 1 ? 0 : 1]}`).join(" · ");
+}
+
+const tick = (ok) => (ok ? '<span class="yes" aria-label="in orde">✓</span>' : '<span class="no" aria-label="niet in orde">✗</span>');
+
+// Wat er getest is, in één regel: vinkjes bij mail, status en nameservers bij een domein.
+function testedLine(m) {
+  const d = m.details ?? {};
+  const type = typeOf(m);
+  if (type === "mail" && d.checks?.length) {
+    return d.checks.map((c) => `<span class="item" title="${esc(c.info ?? "")}">${esc(c.label)} ${tick(c.ok)}${c.key === "dmarc" && c.policy ? ` (p=${esc(c.policy)})` : ""}</span>`).join("");
+  }
+  if (type === "domein") {
+    const parts = [];
+    if (d.status?.length) parts.push(`<span class="item">status <b>${esc(d.status.join(", "))}</b></span>`);
+    else if (d.source === "dns") parts.push('<span class="item">status onbekend (register niet bereikbaar)</span>');
+    parts.push(`<span class="wrap">nameservers <b>${d.nameservers?.length ? esc(d.nameservers.join(", ")) : "geen"}</b></span>`);
+    if (d.expires) parts.push(`<span class="item">verloopt <b>${esc(d.expires)}</b></span>`);
+    if (d.registrar) parts.push(`<span class="item">registrar <b>${esc(d.registrar)}</b></span>`);
+    return parts.join("");
+  }
+  if (type === "dns" && d.values) {
+    return `<span class="wrap">${esc(d.record ?? m.record ?? "A")} → <b>${d.values.length ? esc(d.values.join(", ")) : "geen"}</b>${m.expect ? ` · verwacht <b>${esc(m.expect)}</b> ${tick(d.values.some((v) => v.toLowerCase().includes(String(m.expect).toLowerCase().replace(/\.$/, ""))))}` : ""}</span>`;
+  }
+  if (type === "poort" && d.ip) return `<span class="item">TCP-verbinding met <b>${esc(d.ip)}:${esc(d.port)}</b></span>`;
+  return "";
+}
+
+// Onder de naam: wat er precies bewaakt wordt.
+function targetLine(m) {
+  const type = typeOf(m);
+  if (type === "website") return "";
+  const extra = type === "mail" ? ` · ${esc(PROVIDERS[m.provider] ?? PROVIDERS.overig)}`
+    : type === "dns" ? ` · ${esc(m.record ?? "A")}-record`
+    : "";
+  return `<div class="target">${esc(m.target ?? "")}${extra}</div>`;
 }
 
 function siteCard(m) {
   const { histories } = data;
   const h = histories[m.slug];
+  const type = typeOf(m);
   const u = uptimeFor(h, period);
   const dt = downtimeIn(h.incidents, period);
   const n = outagesIn(h.incidents, period).length;
   const avg = avgResponse(h, period);
-  const dot = m.paused ? "" : m.ok ? (m.slow ? "warn" : "ok") : "down";
-  const state = m.paused ? "gepauzeerd" : m.ok ? `${m.ms} ms${m.slow ? " — traag" : ""}` : "onbereikbaar";
+  const warnings = m.paused ? [] : (m.warnings ?? []);
+  const dot = m.paused ? "" : m.ok ? (m.slow || warnings.length ? "warn" : "ok") : "down";
+  const state = m.paused ? "gepauzeerd"
+    : !m.ok ? (isReach(m) ? "onbereikbaar" : "storing")
+    : isReach(m) ? `${m.ms} ms${m.slow ? " — traag" : ""}`
+    : warnings.length ? "werkt, met waarschuwing" : "in orde";
   const problem = !m.paused && !m.ok
     ? `<div class="problem">${catBadge(categoryOf(m))} ${esc(m.reason ?? "onbereikbaar")} <span class="since">— sinds ${esc(fmtTime(m.since))} (${fmtDuration(Date.now() - Date.parse(m.since))})</span></div>`
     : "";
-  const cert = m.cert
+  // De certificaatwaarschuwing staat al in de meta-regel.
+  const warnList = warnings.filter((w) => w.key !== "cert");
+  const warnHtml = warnList.length ? `<ul class="warnings">${warnList.map((w) => `<li>${esc(w.text ?? w)}</li>`).join("")}</ul>` : "";
+  const tested = testedLine(m);
+  const cert = type === "website" && m.cert
     ? (m.cert.daysLeft <= 14
         ? `<span class="warn">certificaat verloopt over ${m.cert.daysLeft} dagen (${esc(m.cert.validTo)})</span>`
         : `<span title="${esc(m.cert.issuer ?? "")}">certificaat geldig tot <b>${esc(m.cert.validTo)}</b></span>`)
     : "";
+  const name = type === "website" && m.url
+    ? `<a href="${esc(m.url)}" rel="noopener" target="_blank">${esc(m.name)}</a>`
+    : esc(m.name);
   return `
     <div class="site">
       <div class="head">
         <span class="dot ${dot}"></span>
-        <span class="name"><a href="${esc(m.url)}" rel="noopener" target="_blank">${esc(m.name)}</a></span>
+        <span class="name">${name}</span>
+        <span class="type">${esc(TYPES[type])}</span>
         <span class="state ${!m.paused && !m.ok ? "bad" : ""}">${state}</span>
       </div>
+      ${targetLine(m)}
       ${problem}
+      ${tested ? `<div class="tested">${tested}</div>` : ""}
+      ${warnHtml}
       ${renderBars(h.daily)}
       ${renderSpark(h.recent)}
       <div class="meta">
         <span>uptime ${periodLabel()} <b>${fmtPct(u.pct)}</b></span>
         <span>storingen <b>${n}</b></span>
         <span>downtime <b>${dt ? fmtDuration(dt) : "0 min"}</b></span>
-        ${avg ? `<span>gem. responstijd <b>${avg} ms</b></span>` : ""}
+        ${avg ? `<span>gem. ${isReach(m) ? "responstijd" : "testduur"} <b>${avg} ms</b></span>` : ""}
         ${cert ? `<span>${cert}</span>` : ""}
       </div>
     </div>`;
@@ -502,7 +587,7 @@ function renderOutages() {
   // filterkeuzes bijwerken, huidige keuze behouden
   const siteSel = $("f-site"), catSel = $("f-cat");
   const keepSite = siteSel.value, keepCat = catSel.value;
-  siteSel.innerHTML = '<option value="">Alle sites</option>' + (data.status.monitors ?? []).filter(inScope)
+  siteSel.innerHTML = '<option value="">Alles</option>' + (data.status.monitors ?? []).filter(inScope)
     .map((m) => `<option value="${esc(m.slug)}">${esc(m.name)}</option>`).join("");
   catSel.innerHTML = '<option value="">Alle soorten</option>' + Object.entries(CATEGORIES)
     .map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join("");
@@ -517,7 +602,7 @@ function renderOutages() {
   }
   $("outages").innerHTML = `
     <table class="outages">
-      <thead><tr><th>Site</th><th>Soort</th><th>Begin</th><th>Einde</th><th>Duur</th><th>Oorzaak</th></tr></thead>
+      <thead><tr><th>Monitor</th><th>Soort</th><th>Begin</th><th>Einde</th><th>Duur</th><th>Oorzaak</th></tr></thead>
       <tbody>${rows.map((o) => {
         const end = o.end ? Date.parse(o.end) : Date.now();
         return `
@@ -592,7 +677,7 @@ setupLogin({
       $("login").classList.remove("hidden");
       $("login-msg").className = "msg err";
       $("login-msg").textContent = errorText(err, gh.repo);
-      $("subhead").textContent = "Log in om de status van je websites te zien.";
+      $("subhead").textContent = "Log in om de status van je websites en diensten te zien.";
       return;
     }
     $("app").classList.remove("hidden");
@@ -607,7 +692,7 @@ setupLogin({
     $("nav").classList.add("hidden");
     $("headline").textContent = "Status";
     $("headline").style.color = "";
-    $("subhead").textContent = "Log in om de status van je websites te zien.";
+    $("subhead").textContent = "Log in om de status van je websites en diensten te zien.";
   },
 });
 </script>

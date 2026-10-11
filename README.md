@@ -1,10 +1,11 @@
 # Uptime-monitor via GitHub Actions
 
-Controleert je websites elke paar minuten vanaf GitHub's servers, houdt een
-geschiedenis bij, toont een statuspagina en waarschuwt je per Telegram en e-mail
-zodra er iets omvalt.
+Controleert je websites, maildomeinen, domeinregistraties, DNS-records en
+serverpoorten elke paar minuten vanaf GitHub's servers, houdt een geschiedenis
+bij, toont een statuspagina en waarschuwt je per Telegram en e-mail zodra er
+iets omvalt. Zie [Soorten tests](#soorten-tests).
 
-Wat er per site gecontroleerd wordt:
+Wat er per website gecontroleerd wordt:
 
 - of de site antwoordt, en met welke HTTP-status
 - hoe snel (bij trage reacties kleurt de pagina oranje, dat is geen storing)
@@ -25,6 +26,99 @@ Op de statuspagina zie je per site:
   mislukte metingen (beweeg eroverheen voor de oorzaak)
 - de laatste vijf storingen met begin, duur en oorzaak, in gewone taal
   ("SSL-certificaat ongeldig", "domein niet gevonden") in plaats van foutcodes
+
+## Soorten tests
+
+Per regel in `monitors.json` kies je met `type` wat er getest wordt. Regels
+zonder `type` zijn een website, dus oude regels blijven gewoon werken. Websites
+gebruiken `url`, de andere soorten `target` (een domein, host of host:poort).
+
+Alle soorten werken hetzelfde: een storing telt pas na twee mislukte rondes,
+je krijgt één melding bij een storing en één als het weer in orde is, en ze
+tellen mee in de uptime en de storingslijst. Een **waarschuwing** (oranje op
+het dashboard) is géén storing: je krijgt er één melding van zodra er een
+nieuwe bijkomt, hooguit één keer per dag per monitor.
+
+In de beheerpagina kies je bovenaan het formulier de *Soort test*; je ziet dan
+alleen de velden die erbij horen.
+
+### Website
+
+Zoals hierboven: HTTP-status, inhoud (`mustContain`, `mustNotContain`),
+responstijd (`slowMs`) en het SSL-certificaat (waarschuwing vanaf 14 dagen,
+elke dag opnieuw zolang het speelt). Bij een storing zoekt de monitor uit waar
+het misgaat: DNS, verbinding of certificaat.
+
+```json
+{ "name": "BPCF", "url": "https://www.bpcf.nl/", "mustNotContain": ["Fatal error"], "group": "klant", "client": "BPCF" }
+```
+
+### Mail
+
+Voor maildomeinen zonder (eigen) website, zoals Microsoft 365. Alles via DNS;
+er wordt geen mail verstuurd (GitHub blokkeert poort 25 toch).
+
+```json
+{ "name": "Brouwers Infra mail", "type": "mail", "provider": "microsoft365", "target": "brouwersinfra.nl", "group": "klant", "client": "Brouwers Infra" }
+```
+
+| Controle | Microsoft 365 (`microsoft365`) | Google (`google`) | `overig` | Bij een fout |
+|---|---|---|---|---|
+| MX-record | wijst naar `*.mail.protection.outlook.com` (of het nieuwere `*.mx.microsoft`) | wijst naar `*.google.com` (aspmx) | bestaat | **storing** |
+| Mailserver uit MX heeft een IP-adres (A/AAAA) | ✓ | ✓ | ✓ | **storing** |
+| SPF | met `include:spf.protection.outlook.com` | met `include:_spf.google.com` | aanwezig | waarschuwing |
+| DKIM | CNAME's `selector1` en `selector2._domainkey` | `google._domainkey` | — | waarschuwing |
+| DMARC (`_dmarc`) | aanwezig, beleid p=none/quarantine/reject wordt getoond | idem | idem | waarschuwing |
+| Autodiscover | CNAME naar `autodiscover.outlook.com` | — | — | waarschuwing |
+
+Andere DKIM-selectors kun je opgeven met `"dkimSelectors": ["s1", "s2"]`.
+Op het dashboard zie je het als rijtje vinkjes: MX ✓ SPF ✓ DKIM ✗ DMARC ✓ (p=quarantine) Autodiscover ✓.
+
+### Domein
+
+Controleert via RDAP (`https://rdap.org/domain/<domein>`, voor .nl bij SIDN) of
+het domein actief geregistreerd is en nameservers heeft. Het dashboard toont de
+status, de nameservers en (als het register die geeft) de vervaldatum en registrar.
+
+```json
+{ "name": "KW Advies domein", "type": "domein", "target": "kw-advies.nl", "group": "klant", "client": "KW Advies" }
+```
+
+- Niet geregistreerd, een status als inactive/quarantine/redemption/hold, of geen nameservers: **storing** (soort *Domein*).
+- Verloopt binnen 30 dagen: waarschuwing. .nl geeft meestal geen vervaldatum; dan geen waarschuwing.
+- Is het register even niet bereikbaar, dan controleert de monitor alleen de nameservers via DNS en geeft een waarschuwing.
+
+### DNS
+
+Controleert dat een record bestaat (A, AAAA, CNAME, MX of TXT) en eventueel een
+verwachte waarde bevat. Handig om te merken dat een A-record onverwacht verandert.
+
+```json
+{ "name": "KW Advies A-record", "type": "dns", "target": "www.kw-advies.nl", "record": "A", "expect": "185.104.28.238", "group": "klant", "client": "KW Advies" }
+```
+
+Zonder `expect` is alleen het bestaan genoeg. Een ontbrekend record of een
+andere waarde is een **storing** (soort *DNS*).
+
+### Poort
+
+TCP-verbinding naar een server, bijvoorbeeld RDP (3389) of SSH (22), met de
+verbindingstijd als responstijd.
+
+```json
+{ "name": "Kantoorserver RDP", "type": "poort", "target": "server.voorbeeld.nl:3389", "group": "eigen" }
+```
+
+Geen verbinding is een **storing** (soort *Server onbereikbaar* of *Time-out*).
+Let op: de test komt van GitHub's servers, dus de poort moet vanaf internet bereikbaar zijn.
+
+### Geschiedenis en slug
+
+De meetgeschiedenis staat in `docs/history/<slug>.json`. De slug komt uit de
+naam, of uit het veld `slug`. Houd hem gelijk als je alleen de naam of het
+adres wijzigt, dan blijft de geschiedenis behouden. Verander je in de
+beheerpagina de soort test, dan krijgt de monitor een nieuwe slug en begint hij
+met een schone geschiedenis.
 
 ## Opzetten
 

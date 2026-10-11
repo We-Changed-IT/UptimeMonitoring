@@ -50,12 +50,15 @@ commit_results() {
   git -C "$dir" add docs/
   if git -C "$dir" diff --quiet --staged; then
     # Niets te committen, maar wel wijzigingen van de beheerpagina ophalen.
-    git -C "$dir" pull -q --rebase origin main || true
+    git -C "$dir" pull -q --rebase origin main || git -C "$dir" rebase --abort 2>/dev/null || true
     return 0
   fi
   git -C "$dir" commit -q -m "status $(date -u +'%Y-%m-%d %H:%M')"
   for attempt in 1 2 3; do
     git -C "$dir" pull -q --rebase -X theirs origin main && git -C "$dir" push -q origin HEAD:main && return 0
+    # Een vastgelopen rebase (bijv. een bestand dat intussen verwijderd is)
+    # niet laten staan, anders blijft elke volgende ronde hangen.
+    git -C "$dir" rebase --abort 2>/dev/null || true
     sleep $(( attempt * 5 ))
   done
   echo "::warning::Resultaten konden niet gepusht worden"

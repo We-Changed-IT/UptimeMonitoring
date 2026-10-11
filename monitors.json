@@ -32,7 +32,9 @@
     },
     {
       "name": "Brouwers Infra (app)",
+      "type": "website",
       "url": "https://app.brouwersinfra.nl/",
+      "slug": "brouwers-infra-app",
       "mustNotContain": [
         "Fatal error"
       ],
@@ -40,11 +42,17 @@
       "client": "Brouwers Infra"
     },
     {
-      "name": "Brouwers Infra",
-      "url": "https://brouwersinfra.nl/",
-      "mustNotContain": [
-        "Fatal error"
-      ],
+      "name": "Brouwers Infra mail",
+      "type": "mail",
+      "provider": "microsoft365",
+      "target": "brouwersinfra.nl",
+      "group": "klant",
+      "client": "Brouwers Infra"
+    },
+    {
+      "name": "Brouwers Infra domein",
+      "type": "domein",
+      "target": "brouwersinfra.nl",
       "group": "klant",
       "client": "Brouwers Infra"
     },
@@ -57,11 +65,17 @@
       "group": "eigen"
     },
     {
-      "name": "KW Advies",
-      "url": "https://kw-advies.nl/",
-      "mustNotContain": [
-        "Fatal error"
-      ],
+      "name": "KW Advies mail",
+      "type": "mail",
+      "provider": "microsoft365",
+      "target": "kw-advies.nl",
+      "group": "klant",
+      "client": "KW Advies"
+    },
+    {
+      "name": "KW Advies domein",
+      "type": "domein",
+      "target": "kw-advies.nl",
       "group": "klant",
       "client": "KW Advies"
     },

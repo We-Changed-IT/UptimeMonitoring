@@ -116,6 +116,8 @@
   .group-title:first-child { border-top: 0; }
   .group-title + .item { border-top: 0; }
   code { font-size: 13px; background: var(--paper); padding: 1px 4px; border-radius: 3px; }
+  .type { display: inline-block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand); border: 1px solid var(--rule); border-radius: 3px; padding: 0 5px; margin-left: 6px; vertical-align: 2px; }
+  .fields { margin-top: 0; }
 </style>
 </head>
 <body>
@@ -125,8 +127,8 @@
     <span class="product">Uptime monitor</span>
     <nav><a href="./">Naar de statuspagina</a></nav>
   </div>
-  <h1>Sites beheren</h1>
-  <p class="lead">Sites toevoegen, aanpassen of pauzeren. Wijzigingen gaan binnen 5 minuten in.</p>
+  <h1>Monitors beheren</h1>
+  <p class="lead">Websites, mail, domeinen, DNS-records en poorten toevoegen, aanpassen of pauzeren. Wijzigingen gaan binnen 5 minuten in.</p>
 
   <!-- Inloggen met een GitHub-token -->
   <section class="panel" id="login">
@@ -151,24 +153,80 @@
     <div class="list" id="list"></div>
 
     <section class="panel" id="editor">
-      <h2 id="editor-title">Site toevoegen</h2>
+      <h2 id="editor-title">Monitor toevoegen</h2>
       <form id="form" novalidate>
         <div class="row">
+          <div>
+            <label for="f-type">Soort test</label>
+            <select id="f-type">
+              <option value="website">Website — bereikbaarheid, inhoud en certificaat</option>
+              <option value="mail">Mail — MX, SPF, DKIM, DMARC</option>
+              <option value="domein">Domein — registratie en nameservers</option>
+              <option value="dns">DNS — één record controleren</option>
+              <option value="poort">Poort — TCP-verbinding (server, RDP, SSH)</option>
+            </select>
+          </div>
           <div>
             <label for="f-name">Naam</label>
             <input type="text" id="f-name" required placeholder="Mijn website">
           </div>
-          <div>
-            <label for="f-url">Adres</label>
-            <input type="url" id="f-url" required placeholder="https://www.voorbeeld.nl/">
+        </div>
+
+        <div class="fields" data-for="website">
+          <label for="f-url">Adres</label>
+          <input type="url" id="f-url" placeholder="https://www.voorbeeld.nl/">
+        </div>
+        <div class="fields" data-for="mail domein">
+          <div class="row">
+            <div>
+              <label for="f-domain">Domein</label>
+              <input type="text" id="f-domain" placeholder="voorbeeld.nl" autocapitalize="off" spellcheck="false">
+            </div>
+            <div data-for="mail">
+              <label for="f-provider">Mailprovider</label>
+              <select id="f-provider">
+                <option value="microsoft365">Microsoft 365</option>
+                <option value="google">Google Workspace</option>
+                <option value="overig">Overig — alleen MX controleren</option>
+              </select>
+            </div>
           </div>
         </div>
+        <div class="fields" data-for="dns">
+          <div class="row">
+            <div>
+              <label for="f-dnsname">Naam</label>
+              <input type="text" id="f-dnsname" placeholder="www.voorbeeld.nl" autocapitalize="off" spellcheck="false">
+            </div>
+            <div>
+              <label for="f-record">Recordtype</label>
+              <select id="f-record">
+                <option>A</option><option>AAAA</option><option>CNAME</option><option>MX</option><option>TXT</option>
+              </select>
+            </div>
+          </div>
+          <label for="f-expect">Verwachte waarde <span class="hint">— optioneel, bijv. het IP-adres van de server</span></label>
+          <input type="text" id="f-expect" placeholder="185.104.28.238" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="fields" data-for="poort">
+          <div class="row">
+            <div>
+              <label for="f-host">Host</label>
+              <input type="text" id="f-host" placeholder="server.voorbeeld.nl" autocapitalize="off" spellcheck="false">
+            </div>
+            <div>
+              <label for="f-port">Poort <span class="hint">— 1 tot 65535</span></label>
+              <input type="number" id="f-port" min="1" max="65535" placeholder="3389">
+            </div>
+          </div>
+        </div>
+
         <div class="row">
           <div>
-            <label for="f-group">Soort</label>
+            <label for="f-group">Van wie</label>
             <select id="f-group">
-              <option value="klant">Site van een klant</option>
-              <option value="eigen">Eigen site</option>
+              <option value="klant">Van een klant</option>
+              <option value="eigen">Eigen (We Changed IT)</option>
             </select>
           </div>
           <div id="client-wrap">
@@ -177,12 +235,14 @@
             <datalist id="clients"></datalist>
           </div>
         </div>
-        <label for="f-contain">Moet bevatten <span class="hint">— optioneel, bijv. tekst van je offerteknop</span></label>
-        <input type="text" id="f-contain" placeholder="Offerte aanvragen">
-        <label for="f-notcontain">Mag niet bevatten <span class="hint">— één foutmelding per regel</span></label>
-        <textarea id="f-notcontain" placeholder="Fatal error"></textarea>
+        <div class="fields" data-for="website">
+          <label for="f-contain">Moet bevatten <span class="hint">— optioneel, bijv. tekst van je offerteknop</span></label>
+          <input type="text" id="f-contain" placeholder="Offerte aanvragen">
+          <label for="f-notcontain">Mag niet bevatten <span class="hint">— één foutmelding per regel</span></label>
+          <textarea id="f-notcontain" placeholder="Fatal error"></textarea>
+        </div>
         <div class="row">
-          <div>
+          <div data-for="website">
             <label for="f-slow">Traag vanaf <span class="hint">— milliseconden</span></label>
             <input type="number" id="f-slow" min="500" step="500" placeholder="3000">
           </div>
@@ -208,6 +268,18 @@
 // Deze pagina past monitors.json aan via de GitHub-API (zie gh.js).
 import { $, esc, errorText, setupLogin } from "./gh.js";
 
+const TYPES = { website: "Website", mail: "Mail", domein: "Domein", dns: "DNS", poort: "Poort" };
+const PROVIDERS = { microsoft365: "Microsoft 365", google: "Google Workspace", overig: "overige provider" };
+const typeOf = (m) => (TYPES[m?.type] ? m.type : "website");
+// Velden die alleen bij één soort test horen. Bij het opslaan halen we de
+// velden van de andere soorten weg.
+const TYPE_FIELDS = {
+  website: ["url", "mustContain", "mustNotContain", "slowMs", "expectStatus", "timeoutMs"],
+  mail: ["target", "provider", "dkimSelectors"],
+  domein: ["target", "timeoutMs"],
+  dns: ["target", "record", "expect"],
+  poort: ["target", "port", "timeoutMs", "slowMs"],
+};
 const slugify = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const FILE = "monitors.json";
 
@@ -257,18 +329,18 @@ function render() {
   let lastKey = null;
   $("list").innerHTML = list.length
     ? order.map(({ m, i, key }) => {
-        const title = key !== lastKey ? `<div class="group-title">${key === "\u0000" ? "Eigen sites" : `Klant: ${esc(key)}`}</div>` : "";
+        const title = key !== lastKey ? `<div class="group-title">${key === "\u0000" ? "Eigen" : `Klant: ${esc(key)}`}</div>` : "";
         lastKey = key;
         const tags = [
           m.paused ? '<span class="tag-paused">gepauzeerd</span>' : "",
-          m.mustContain ? `moet bevatten: “${esc(m.mustContain)}”` : "",
+          typeOf(m) === "website" && m.mustContain ? `moet bevatten: “${esc(m.mustContain)}”` : "",
           m.confirmRounds ? `melden na ${esc(m.confirmRounds)} ronde${m.confirmRounds > 1 ? "s" : ""}` : "",
         ].filter(Boolean).join(" · ");
         return `${title}
           <div class="item">
             <div class="info">
-              <div class="name">${esc(m.name)}</div>
-              <div class="url">${esc(m.url)}</div>
+              <div class="name">${esc(m.name)}<span class="type">${esc(TYPES[typeOf(m)])}</span></div>
+              <div class="url">${esc(describe(m))}</div>
               ${tags ? `<div class="tags">${tags}</div>` : ""}
             </div>
             <div class="buttons">
@@ -278,11 +350,22 @@ function render() {
             </div>
           </div>`;
       }).join("")
-    : '<div class="empty">Nog geen sites. Voeg er hieronder een toe.</div>';
+    : '<div class="empty">Nog geen monitors. Voeg er hieronder een toe.</div>';
 
   // bestaande klantnamen als suggestie in het formulier
   const clients = [...new Set(list.map((m) => m.client).filter(Boolean))].sort((a, b) => a.localeCompare(b, "nl"));
   $("clients").innerHTML = clients.map((c) => `<option value="${esc(c)}">`).join("");
+}
+
+// Wat er bewaakt wordt, in één regel.
+function describe(m) {
+  switch (typeOf(m)) {
+    case "mail": return `${m.target ?? ""} · ${PROVIDERS[m.provider] ?? PROVIDERS.overig}`;
+    case "domein": return `${m.target ?? ""} · registratie en nameservers`;
+    case "dns": return `${m.record ?? "A"}-record van ${m.target ?? ""}${m.expect ? ` · verwacht ${m.expect}` : ""}`;
+    case "poort": return `TCP ${m.target ?? ""}${m.port && !/:\d+$/.test(m.target ?? "") ? `:${m.port}` : ""}`;
+    default: return m.url ?? "";
+  }
 }
 
 $("list").addEventListener("click", async (e) => {
@@ -322,8 +405,18 @@ function startEdit(i) {
   $("editor-title").textContent = `${m.name} bewerken`;
   $("save-btn").textContent = "Opslaan";
   $("cancel-btn").classList.remove("hidden");
+  const type = typeOf(m);
+  $("f-type").value = type;
   $("f-name").value = m.name ?? "";
-  $("f-url").value = m.url ?? "";
+  $("f-url").value = type === "website" ? (m.url ?? "") : "";
+  $("f-domain").value = type === "mail" || type === "domein" ? (m.target ?? "") : "";
+  $("f-provider").value = PROVIDERS[m.provider] ? m.provider : (type === "mail" ? "overig" : "microsoft365");
+  $("f-dnsname").value = type === "dns" ? (m.target ?? "") : "";
+  $("f-record").value = type === "dns" ? String(m.record ?? "A").toUpperCase() : "A";
+  $("f-expect").value = type === "dns" ? (m.expect ?? "") : "";
+  const hp = type === "poort" ? splitHostPort(m.target ?? "", m.port) : { host: "", port: "" };
+  $("f-host").value = hp.host;
+  $("f-port").value = hp.port;
   $("f-contain").value = m.mustContain ?? "";
   $("f-notcontain").value = [].concat(m.mustNotContain ?? []).join("\n");
   $("f-slow").value = m.slowMs ?? "";
@@ -332,6 +425,7 @@ function startEdit(i) {
   $("f-group").value = groupOf(m);
   $("f-client").value = m.client ?? "";
   toggleClient();
+  toggleType();
   $("form-msg").textContent = "";
   $("editor").scrollIntoView({ behavior: "smooth" });
 }
@@ -339,10 +433,11 @@ function startEdit(i) {
 function resetForm() {
   editing = null;
   $("form").reset();
-  $("editor-title").textContent = "Site toevoegen";
+  $("editor-title").textContent = "Monitor toevoegen";
   $("save-btn").textContent = "Toevoegen";
   $("cancel-btn").classList.add("hidden");
   toggleClient();
+  toggleType();
 }
 
 $("cancel-btn").addEventListener("click", () => { resetForm(); $("form-msg").textContent = ""; });
@@ -350,32 +445,110 @@ $("cancel-btn").addEventListener("click", () => { resetForm(); $("form-msg").tex
 function toggleClient() { $("client-wrap").classList.toggle("hidden", $("f-group").value === "eigen"); }
 $("f-group").addEventListener("change", toggleClient);
 
+// Alleen de velden tonen die bij de gekozen soort test horen.
+const PLACEHOLDER = { website: "Mijn website", mail: "Klant mail", domein: "Klant domein", dns: "Klant A-record", poort: "Klant server (RDP)" };
+function toggleType() {
+  const type = $("f-type").value;
+  for (const el of document.querySelectorAll("#form [data-for]")) el.classList.toggle("hidden", !el.dataset.for.split(" ").includes(type));
+  $("f-name").placeholder = PLACEHOLDER[type];
+}
+$("f-type").addEventListener("change", toggleType);
+toggleType();
+
+// --- invoer controleren -------------------------------------------------------
+
+const LABEL = "[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?";
+const TLD = "(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})";
+const DOMAIN_RE = new RegExp(`^(?:${LABEL}\\.)+${TLD}$`);
+// DNS-namen mogen ook een underscore hebben (_dmarc, selector1._domainkey).
+const DNSNAME_RE = new RegExp(`^(?:(?:_?${LABEL}|_[a-z0-9-]+)\\.)+${TLD}$`);
+const IPV4_RE = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/;
+const isIPv6 = (s) => s.includes(":") && /^[0-9a-f:.]+$/i.test(s) && (() => { try { new URL(`http://[${s}]/`); return true; } catch { return false; } })();
+
+// "https://www.Voorbeeld.nl/pad" → "www.voorbeeld.nl"
+const cleanDomain = (s) => s.trim().toLowerCase().replace(/^[a-z]+:\/\//, "").replace(/[/?#].*$/, "").replace(/\.$/, "");
+
+function splitHostPort(target, port) {
+  let m = /^\[([^\]]+)\](?::(\d+))?$/.exec(target);
+  if (m) return { host: m[1], port: m[2] ?? port ?? "" };
+  m = /^([^:]+):(\d+)$/.exec(target);
+  if (m) return { host: m[1], port: m[2] };
+  return { host: target, port: port ?? "" };
+}
+
+function readDomain(id, re = DOMAIN_RE) {
+  const value = cleanDomain($(id).value);
+  $(id).value = value;
+  if (!value) throw new Error("Vul een domein in, bijvoorbeeld voorbeeld.nl.");
+  if (!re.test(value)) throw new Error(`"${value}" is geen geldig domein.`);
+  return value;
+}
+
 function readForm() {
+  const type = $("f-type").value;
   const name = $("f-name").value.trim();
-  const url = $("f-url").value.trim();
   if (!name) throw new Error("Vul een naam in.");
-  let parsed;
-  try { parsed = new URL(url); } catch { throw new Error("Vul een volledig adres in, beginnend met https://"); }
-  if (!/^https?:$/.test(parsed.protocol)) throw new Error("Het adres moet met http:// of https:// beginnen.");
+
+  // Velden per soort test lezen en controleren.
+  const fields = {};
+  if (type === "website") {
+    const url = $("f-url").value.trim();
+    let parsed;
+    try { parsed = new URL(url); } catch { throw new Error("Vul een volledig adres in, beginnend met https://"); }
+    if (!/^https?:$/.test(parsed.protocol)) throw new Error("Het adres moet met http:// of https:// beginnen.");
+    fields.url = parsed.href;
+  } else if (type === "mail" || type === "domein") {
+    fields.target = readDomain("f-domain");
+    if (type === "mail") fields.provider = $("f-provider").value;
+  } else if (type === "dns") {
+    fields.target = readDomain("f-dnsname", DNSNAME_RE);
+    fields.record = $("f-record").value;
+    const expect = $("f-expect").value.trim();
+    if (expect && fields.record === "A" && !IPV4_RE.test(expect)) throw new Error(`"${expect}" is geen geldig IPv4-adres.`);
+    if (expect && fields.record === "AAAA" && !isIPv6(expect)) throw new Error(`"${expect}" is geen geldig IPv6-adres.`);
+    fields.expect = expect;
+  } else if (type === "poort") {
+    const host = cleanDomain($("f-host").value).replace(/^\[|\]$/g, "");
+    if (!host) throw new Error("Vul een host in (domeinnaam of IP-adres).");
+    if (!DOMAIN_RE.test(host) && !IPV4_RE.test(host) && !isIPv6(host)) throw new Error(`"${host}" is geen geldige hostnaam of IP-adres.`);
+    const port = Number($("f-port").value);
+    if (!$("f-port").value.trim() || !Number.isInteger(port) || port < 1 || port > 65535) throw new Error("Vul een poort in van 1 tot 65535.");
+    fields.target = `${isIPv6(host) ? `[${host}]` : host}:${port}`;
+  }
 
   // Bestaande velden die dit formulier niet toont (zoals expectStatus) laten we staan.
   const monitor = editing === null ? {} : { ...config.monitors[editing] };
+  const oldType = editing === null ? null : typeOf(monitor);
 
   // De slug bepaalt de bestandsnaam van de meetgeschiedenis. Bij een naamswijziging
-  // houden we de oude vast, anders begint de site met een lege geschiedenis.
-  const slugOf = (m) => m.slug ?? slugify(m.name ?? m.url);
-  if (editing !== null && !monitor.slug && slugify(name) !== slugOf(monitor)) monitor.slug = slugOf(monitor);
+  // houden we de oude vast, anders begint de monitor met een lege geschiedenis.
+  // Wordt de soort test anders, dan begint hij juist wel opnieuw.
+  const slugOf = (m) => m.slug ?? slugify(m.name ?? m.url ?? m.target ?? "");
+  const taken = (slug) => config.monitors.some((m, i) => i !== editing && slugOf(m) === slug);
+  if (editing !== null && oldType !== type) {
+    let slug = slugify(`${name} ${type}`), n = 2;
+    while (taken(slug) || slug === slugOf(monitor)) slug = slugify(`${name} ${type} ${n++}`);
+    monitor.slug = slug;
+  } else if (editing !== null && !monitor.slug && slugify(name) !== slugOf(monitor)) {
+    monitor.slug = slugOf(monitor);
+  }
   const slug = monitor.slug ?? slugify(name);
   if (!slug) throw new Error("Gebruik minstens één letter of cijfer in de naam.");
-  const clash = config.monitors.findIndex((m, i) => i !== editing && slugOf(m) === slug);
-  if (clash !== -1) throw new Error(`Er is al een site met de naam ${config.monitors[clash].name}.`);
+  if (taken(slug)) throw new Error(`Er is al een monitor met de naam ${config.monitors.find((m, i) => i !== editing && slugOf(m) === slug).name}.`);
 
   monitor.name = name;
-  monitor.url = parsed.href;
+  if (type === "website") delete monitor.type; else monitor.type = type;
+  for (const [t, keys] of Object.entries(TYPE_FIELDS)) {
+    if (t !== type) for (const k of keys) if (!TYPE_FIELDS[type].includes(k)) delete monitor[k];
+  }
   const setOrDrop = (key, value) => { if (value === "" || value == null || (Array.isArray(value) && !value.length)) delete monitor[key]; else monitor[key] = value; };
-  setOrDrop("mustContain", $("f-contain").value.trim());
-  setOrDrop("mustNotContain", $("f-notcontain").value.split("\n").map((s) => s.trim()).filter(Boolean));
-  setOrDrop("slowMs", $("f-slow").value ? Number($("f-slow").value) : "");
+  for (const [k, v] of Object.entries(fields)) setOrDrop(k, v);
+  if (type === "poort") delete monitor.port;
+  if (type === "website") {
+    setOrDrop("mustContain", $("f-contain").value.trim());
+    setOrDrop("mustNotContain", $("f-notcontain").value.split("\n").map((s) => s.trim()).filter(Boolean));
+    setOrDrop("slowMs", $("f-slow").value ? Number($("f-slow").value) : "");
+  }
   setOrDrop("confirmRounds", $("f-confirm").value ? Number($("f-confirm").value) : "");
   setOrDrop("paused", $("f-paused").checked || "");
   monitor.group = $("f-group").value;
@@ -407,7 +580,7 @@ $("form").addEventListener("submit", async (e) => {
     await save(`${wasEditing === null ? "Monitor toegevoegd" : "Monitor aangepast"}: ${monitor.name}`);
     msg.className = "msg ok";
     msg.textContent = wasEditing === null
-      ? `${monitor.name} is toegevoegd. Binnen 5 minuten staat hij op de statuspagina.`
+      ? `${monitor.name} is toegevoegd. Binnen 5 minuten staat de monitor op de statuspagina.`
       : `${monitor.name} is opgeslagen.`;
     resetForm();
   } catch (err) {
