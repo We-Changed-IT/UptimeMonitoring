@@ -32,7 +32,7 @@
     },
     {
       "name": "Brouwers Infra (app)",
-      "url": "https://brouwersinfra.app/",
+      "url": "https://app.brouwersinfra.nl/",
       "mustNotContain": [
         "Fatal error"
       ],
