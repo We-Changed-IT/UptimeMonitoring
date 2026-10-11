@@ -1,16 +1,18 @@
 {
   "title": "We Changed IT",
-  "generated": "2026-10-11T08:41:15.250Z",
+  "generated": "2026-10-11T08:46:15.977Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
+      "type": "website",
       "url": "https://www.bpcf.nl/",
+      "target": null,
       "group": "klant",
       "client": "BPCF",
       "ok": true,
       "code": 200,
-      "ms": 499,
+      "ms": 595,
       "slow": false,
       "reason": null,
       "category": null,
@@ -19,7 +21,7 @@
       "since": "2026-10-10T13:12:17.657Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 31,
@@ -27,9 +29,13 @@
         "subject": "bpcf.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
-        "d1": 79.55,
-        "d7": 93.98,
+        "d1": 80.11,
+        "d7": 93.99,
         "d30": 94.71,
         "d90": 94.71
       }
@@ -37,12 +43,14 @@
     {
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
+      "type": "website",
       "url": "https://www.jegrotedag.nl/",
+      "target": null,
       "group": "klant",
       "client": "Je Grote Dag",
       "ok": true,
       "code": 200,
-      "ms": 559,
+      "ms": 588,
       "slow": false,
       "reason": null,
       "category": null,
@@ -51,7 +59,7 @@
       "since": "2026-10-10T13:12:17.657Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 64,
@@ -59,8 +67,12 @@
         "subject": "jegrotedag.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
-        "d1": 79.55,
+        "d1": 80.11,
         "d7": 93.86,
         "d30": 94.71,
         "d90": 94.71
@@ -69,12 +81,14 @@
     {
       "slug": "sint-en-piet-inhuren",
       "name": "Sint en Piet inhuren",
+      "type": "website",
       "url": "https://sintenpietinhuren.nl/",
+      "target": null,
       "group": "klant",
       "client": "Sint en Piet inhuren",
       "ok": true,
       "code": 200,
-      "ms": 158,
+      "ms": 129,
       "slow": false,
       "reason": null,
       "category": null,
@@ -83,7 +97,7 @@
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 75,
@@ -91,6 +105,10 @@
         "subject": "sintenpietinhuren.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
         "d1": 100,
         "d7": 100,
@@ -101,12 +119,14 @@
     {
       "slug": "brouwers-infra-app",
       "name": "Brouwers Infra (app)",
+      "type": "website",
       "url": "https://app.brouwersinfra.nl/",
+      "target": null,
       "group": "klant",
       "client": "Brouwers Infra",
       "ok": true,
       "code": 200,
-      "ms": 319,
+      "ms": 349,
       "slow": false,
       "reason": null,
       "category": null,
@@ -115,7 +135,7 @@
       "since": "2026-10-11T08:26:15.498Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2026-12-27",
         "daysLeft": 77,
@@ -123,63 +143,157 @@
         "subject": "app4.brouwersinfra.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
-        "d1": 2.27,
-        "d7": 1.69,
-        "d30": 1.69,
-        "d90": 1.69
+        "d1": 2.84,
+        "d7": 2.11,
+        "d30": 2.11,
+        "d90": 2.11
       }
     },
     {
-      "slug": "brouwers-infra",
-      "name": "Brouwers Infra",
-      "url": "https://brouwersinfra.nl/",
+      "slug": "brouwers-infra-mail",
+      "name": "Brouwers Infra mail",
+      "type": "mail",
+      "url": null,
+      "target": "brouwersinfra.nl",
+      "provider": "microsoft365",
       "group": "klant",
       "client": "Brouwers Infra",
-      "ok": false,
+      "ok": true,
       "code": 0,
-      "ms": 207,
+      "ms": 374,
       "slow": false,
-      "reason": "SSL-certificaat hoort bij een ander domein (ERR_TLS_CERT_ALTNAME_INVALID) — voor *.zxcs.nl, uitgegeven door Sectigo Limited, geldig tot 2027-04-03",
-      "category": "cert",
-      "ip": "185.104.29.4",
+      "reason": null,
+      "category": null,
+      "ip": null,
       "flaky": false,
-      "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 236,
-      "alerted": true,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
-      "cert": {
-        "validTo": "2027-04-03",
-        "daysLeft": 174,
-        "issuer": "Sectigo Limited",
-        "subject": "*.zxcs.nl"
-      },
+      "since": "2026-10-11T08:46:15.977Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-11T08:46:15.977Z",
+      "cert": null,
       "certAlertedOn": null,
+      "warnings": [
+        {
+          "key": "dkim",
+          "text": "DKIM ontbreekt (selector1._domainkey, selector2._domainkey)"
+        }
+      ],
+      "warnAlerted": [
+        "dkim"
+      ],
+      "warnAlertedOn": "2026-10-11",
+      "details": {
+        "provider": "microsoft365",
+        "checks": [
+          {
+            "key": "mx",
+            "label": "MX",
+            "ok": true,
+            "info": "brouwersinfra-nl.mail.protection.outlook.com"
+          },
+          {
+            "key": "spf",
+            "label": "SPF",
+            "ok": true,
+            "info": "v=spf1 include:spf.protection.outlook.com -all"
+          },
+          {
+            "key": "dkim",
+            "label": "DKIM",
+            "ok": false,
+            "info": "ontbreekt: selector1, selector2"
+          },
+          {
+            "key": "dmarc",
+            "label": "DMARC",
+            "ok": true,
+            "info": "p=reject",
+            "policy": "reject"
+          },
+          {
+            "key": "autodiscover",
+            "label": "Autodiscover",
+            "ok": true,
+            "info": "autodiscover.outlook.com"
+          }
+        ]
+      },
       "uptime": {
-        "d1": 0,
-        "d7": 0,
-        "d30": 0,
-        "d90": 0
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
+      }
+    },
+    {
+      "slug": "brouwers-infra-domein",
+      "name": "Brouwers Infra domein",
+      "type": "domein",
+      "url": null,
+      "target": "brouwersinfra.nl",
+      "group": "klant",
+      "client": "Brouwers Infra",
+      "ok": true,
+      "code": 0,
+      "ms": 734,
+      "slow": false,
+      "reason": null,
+      "category": null,
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-11T08:46:15.977Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-11T08:46:15.977Z",
+      "cert": null,
+      "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": {
+        "status": [
+          "active"
+        ],
+        "nameservers": [
+          "apollo.ns.cloudflare.com",
+          "liv.ns.cloudflare.com"
+        ],
+        "expires": null,
+        "registrar": "ZXCS",
+        "source": "rdap"
+      },
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
       }
     },
     {
       "slug": "check-my-ip-address",
       "name": "Check my IP address",
+      "type": "website",
       "url": "https://check-my-ip-address.online/",
+      "target": null,
       "group": "eigen",
       "client": null,
       "ok": false,
       "code": 0,
-      "ms": 218,
+      "ms": 219,
       "slow": false,
       "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor TRAEFIK DEFAULT CERT, uitgegeven door TRAEFIK DEFAULT CERT, geldig tot 2027-09-06",
       "category": "cert",
       "ip": "93.114.128.85",
       "flaky": false,
       "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 236,
+      "failCount": 237,
       "alerted": true,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2027-09-06",
         "daysLeft": 330,
@@ -187,6 +301,10 @@
         "subject": "TRAEFIK DEFAULT CERT"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
         "d1": 0,
         "d7": 0,
@@ -195,46 +313,137 @@
       }
     },
     {
-      "slug": "kw-advies",
-      "name": "KW Advies",
-      "url": "https://kw-advies.nl/",
+      "slug": "kw-advies-mail",
+      "name": "KW Advies mail",
+      "type": "mail",
+      "url": null,
+      "target": "kw-advies.nl",
+      "provider": "microsoft365",
       "group": "klant",
       "client": "KW Advies",
-      "ok": false,
+      "ok": true,
       "code": 0,
-      "ms": 278,
+      "ms": 1337,
       "slow": false,
-      "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor localhost, uitgegeven door localhost, geldig tot 2029-10-29",
-      "category": "cert",
-      "ip": "185.104.28.238",
+      "reason": null,
+      "category": null,
+      "ip": null,
       "flaky": false,
-      "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 236,
-      "alerted": true,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
-      "cert": {
-        "validTo": "2029-10-29",
-        "daysLeft": 1114,
-        "issuer": "localhost",
-        "subject": "localhost"
-      },
+      "since": "2026-10-11T08:46:15.977Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-11T08:46:15.977Z",
+      "cert": null,
       "certAlertedOn": null,
+      "warnings": [
+        {
+          "key": "dkim",
+          "text": "DKIM ontbreekt (selector1._domainkey, selector2._domainkey)"
+        }
+      ],
+      "warnAlerted": [
+        "dkim"
+      ],
+      "warnAlertedOn": "2026-10-11",
+      "details": {
+        "provider": "microsoft365",
+        "checks": [
+          {
+            "key": "mx",
+            "label": "MX",
+            "ok": true,
+            "info": "kwadvies-nl0e.mail.protection.outlook.com"
+          },
+          {
+            "key": "spf",
+            "label": "SPF",
+            "ok": true,
+            "info": "v=spf1 include:spf.protection.outlook.com -all"
+          },
+          {
+            "key": "dkim",
+            "label": "DKIM",
+            "ok": false,
+            "info": "ontbreekt: selector1, selector2"
+          },
+          {
+            "key": "dmarc",
+            "label": "DMARC",
+            "ok": true,
+            "info": "p=reject",
+            "policy": "reject"
+          },
+          {
+            "key": "autodiscover",
+            "label": "Autodiscover",
+            "ok": true,
+            "info": "autodiscover.outlook.com"
+          }
+        ]
+      },
       "uptime": {
-        "d1": 0,
-        "d7": 0,
-        "d30": 0,
-        "d90": 0
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
+      }
+    },
+    {
+      "slug": "kw-advies-domein",
+      "name": "KW Advies domein",
+      "type": "domein",
+      "url": null,
+      "target": "kw-advies.nl",
+      "group": "klant",
+      "client": "KW Advies",
+      "ok": true,
+      "code": 0,
+      "ms": 495,
+      "slow": false,
+      "reason": null,
+      "category": null,
+      "ip": null,
+      "flaky": false,
+      "since": "2026-10-11T08:46:15.977Z",
+      "failCount": 0,
+      "alerted": false,
+      "checkedAt": "2026-10-11T08:46:15.977Z",
+      "cert": null,
+      "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": {
+        "status": [
+          "active"
+        ],
+        "nameservers": [
+          "ns.zxcs.be",
+          "ns.zxcs.eu",
+          "ns.zxcs.nl"
+        ],
+        "expires": null,
+        "registrar": "ZXCS",
+        "source": "rdap"
+      },
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100,
+        "d90": 100
       }
     },
     {
       "slug": "biesbroek-bouw",
       "name": "Biesbroek Bouw",
+      "type": "website",
       "url": "https://biesbroekbouw.nl/",
+      "target": null,
       "group": "klant",
       "client": "Biesbroek",
       "ok": true,
       "code": 200,
-      "ms": 636,
+      "ms": 671,
       "slow": false,
       "reason": null,
       "category": null,
@@ -243,7 +452,7 @@
       "since": "2026-10-10T19:45:21.380Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2027-01-05",
         "daysLeft": 85,
@@ -251,22 +460,28 @@
         "subject": "biesbroekbouw.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
-        "d1": 78.98,
-        "d7": 79.66,
-        "d30": 79.66,
-        "d90": 79.66
+        "d1": 79.55,
+        "d7": 79.75,
+        "d30": 79.75,
+        "d90": 79.75
       }
     },
     {
       "slug": "biesbroek-schroeffundamenten",
       "name": "Biesbroek Schroeffundamenten",
+      "type": "website",
       "url": "https://biesbroekschroeffundamenten.nl/",
+      "target": null,
       "group": "klant",
       "client": "Biesbroek",
       "ok": true,
       "code": 200,
-      "ms": 95,
+      "ms": 100,
       "slow": false,
       "reason": null,
       "category": null,
@@ -275,7 +490,7 @@
       "since": "2026-10-10T13:12:17.657Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2027-01-05",
         "daysLeft": 86,
@@ -283,31 +498,37 @@
         "subject": "biesbroekschroeffundamenten.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
-        "d1": 79.55,
-        "d7": 80.08,
-        "d30": 80.08,
-        "d90": 80.08
+        "d1": 80.11,
+        "d7": 80.17,
+        "d30": 80.17,
+        "d90": 80.17
       }
     },
     {
       "slug": "bijna-af",
       "name": "Bijna af",
+      "type": "website",
       "url": "https://bijna-af.nu/",
+      "target": null,
       "group": "eigen",
       "client": null,
       "ok": false,
       "code": 0,
-      "ms": 395,
+      "ms": 286,
       "slow": false,
       "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor localhost, uitgegeven door localhost, geldig tot 2029-10-29",
       "category": "cert",
       "ip": "185.104.28.238",
       "flaky": false,
       "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 236,
+      "failCount": 237,
       "alerted": true,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2029-10-29",
         "daysLeft": 1114,
@@ -315,6 +536,10 @@
         "subject": "localhost"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
         "d1": 0,
         "d7": 0,
@@ -325,12 +550,14 @@
     {
       "slug": "we-changed-it",
       "name": "We Changed IT",
+      "type": "website",
       "url": "https://wechangedit.nl/",
+      "target": null,
       "group": "eigen",
       "client": null,
       "ok": true,
       "code": 200,
-      "ms": 306,
+      "ms": 307,
       "slow": false,
       "reason": null,
       "category": null,
@@ -339,7 +566,7 @@
       "since": "2026-10-09T23:31:22.545Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-11T08:41:15.250Z",
+      "checkedAt": "2026-10-11T08:46:15.977Z",
       "cert": {
         "validTo": "2026-12-01",
         "daysLeft": 51,
@@ -347,6 +574,10 @@
         "subject": "wechangedit.nl"
       },
       "certAlertedOn": null,
+      "warnings": [],
+      "warnAlerted": [],
+      "warnAlertedOn": null,
+      "details": null,
       "uptime": {
         "d1": 100,
         "d7": 100,
