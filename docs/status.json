@@ -1,6 +1,6 @@
 {
   "title": "We Changed IT",
-  "generated": "2026-10-23T12:14:07.130Z",
+  "generated": "2026-10-23T12:19:07.522Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -12,7 +12,7 @@
       "client": "BPCF",
       "ok": true,
       "code": 200,
-      "ms": 583,
+      "ms": 1191,
       "slow": false,
       "reason": null,
       "category": null,
@@ -21,7 +21,7 @@
       "since": "2026-10-18T17:24:10.631Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 19,
@@ -35,7 +35,7 @@
       "details": null,
       "uptime": {
         "d1": 100,
-        "d7": 94.36,
+        "d7": 94.37,
         "d30": 94.32,
         "d90": 94.26
       }
@@ -50,7 +50,7 @@
       "client": "Je Grote Dag",
       "ok": true,
       "code": 200,
-      "ms": 517,
+      "ms": 403,
       "slow": false,
       "reason": null,
       "category": null,
@@ -59,7 +59,7 @@
       "since": "2026-10-18T16:05:44.964Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2027-01-16",
         "daysLeft": 85,
@@ -73,7 +73,7 @@
       "details": null,
       "uptime": {
         "d1": 100,
-        "d7": 95.66,
+        "d7": 95.67,
         "d30": 94.58,
         "d90": 94.56
       }
@@ -88,7 +88,7 @@
       "client": "Sint en Piet inhuren",
       "ok": true,
       "code": 200,
-      "ms": 537,
+      "ms": 569,
       "slow": false,
       "reason": null,
       "category": null,
@@ -97,7 +97,7 @@
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 63,
@@ -126,7 +126,7 @@
       "client": "Brouwers Infra",
       "ok": true,
       "code": 200,
-      "ms": 350,
+      "ms": 553,
       "slow": false,
       "reason": null,
       "category": null,
@@ -135,7 +135,7 @@
       "since": "2026-10-11T08:26:15.498Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2026-12-27",
         "daysLeft": 65,
@@ -150,8 +150,8 @@
       "uptime": {
         "d1": 100,
         "d7": 100,
-        "d30": 89.84,
-        "d90": 89.84
+        "d30": 89.85,
+        "d90": 89.85
       }
     },
     {
@@ -165,7 +165,7 @@
       "client": "Brouwers Infra",
       "ok": true,
       "code": 0,
-      "ms": 670,
+      "ms": 541,
       "slow": false,
       "reason": null,
       "category": null,
@@ -174,7 +174,7 @@
       "since": "2026-10-11T08:46:15.977Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": null,
       "certAlertedOn": null,
       "warnings": [
@@ -240,7 +240,7 @@
       "client": "Brouwers Infra",
       "ok": true,
       "code": 0,
-      "ms": 454,
+      "ms": 339,
       "slow": false,
       "reason": null,
       "category": null,
@@ -249,7 +249,7 @@
       "since": "2026-10-11T08:46:15.977Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": null,
       "certAlertedOn": null,
       "warnings": [],
@@ -284,16 +284,16 @@
       "client": null,
       "ok": false,
       "code": 0,
-      "ms": 183,
+      "ms": 196,
       "slow": false,
       "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor TRAEFIK DEFAULT CERT, uitgegeven door TRAEFIK DEFAULT CERT, geldig tot 2027-10-23",
       "category": "cert",
       "ip": "93.114.128.85",
       "flaky": false,
       "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 2284,
+      "failCount": 2285,
       "alerted": true,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2027-10-23",
         "daysLeft": 364,
@@ -323,7 +323,7 @@
       "client": "KW Advies",
       "ok": true,
       "code": 0,
-      "ms": 481,
+      "ms": 1209,
       "slow": false,
       "reason": null,
       "category": null,
@@ -332,7 +332,7 @@
       "since": "2026-10-11T08:46:15.977Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": null,
       "certAlertedOn": null,
       "warnings": [
@@ -398,7 +398,7 @@
       "client": "KW Advies",
       "ok": true,
       "code": 0,
-      "ms": 20002,
+      "ms": 20003,
       "slow": false,
       "reason": null,
       "category": null,
@@ -407,7 +407,7 @@
       "since": "2026-10-11T08:46:15.977Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": null,
       "certAlertedOn": null,
       "warnings": [
@@ -444,7 +444,7 @@
       "client": "Biesbroek",
       "ok": true,
       "code": 200,
-      "ms": 974,
+      "ms": 1098,
       "slow": false,
       "reason": null,
       "category": null,
@@ -453,7 +453,7 @@
       "since": "2026-10-18T17:24:10.631Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2027-01-05",
         "daysLeft": 73,
@@ -467,9 +467,9 @@
       "details": null,
       "uptime": {
         "d1": 100,
-        "d7": 94.36,
-        "d30": 92.16,
-        "d90": 92.16
+        "d7": 94.37,
+        "d30": 92.17,
+        "d90": 92.17
       }
     },
     {
@@ -482,7 +482,7 @@
       "client": "Biesbroek",
       "ok": true,
       "code": 200,
-      "ms": 157,
+      "ms": 108,
       "slow": false,
       "reason": null,
       "category": null,
@@ -491,7 +491,7 @@
       "since": "2026-10-18T17:24:10.631Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2027-01-05",
         "daysLeft": 73,
@@ -505,7 +505,7 @@
       "details": null,
       "uptime": {
         "d1": 100,
-        "d7": 92.8,
+        "d7": 92.81,
         "d30": 90.24,
         "d90": 90.24
       }
@@ -520,16 +520,16 @@
       "client": null,
       "ok": false,
       "code": 0,
-      "ms": 379,
+      "ms": 841,
       "slow": false,
       "reason": "SSL-certificaat ongeldig (zelf ondertekend) (DEPTH_ZERO_SELF_SIGNED_CERT) — voor localhost, uitgegeven door localhost, geldig tot 2029-10-29",
       "category": "cert",
       "ip": "185.104.28.238",
       "flaky": false,
       "since": "2026-10-09T23:31:22.545Z",
-      "failCount": 2284,
+      "failCount": 2285,
       "alerted": true,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2029-10-29",
         "daysLeft": 1101,
@@ -558,7 +558,7 @@
       "client": null,
       "ok": true,
       "code": 200,
-      "ms": 514,
+      "ms": 306,
       "slow": false,
       "reason": null,
       "category": null,
@@ -567,7 +567,7 @@
       "since": "2026-10-09T23:31:22.545Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-23T12:14:07.130Z",
+      "checkedAt": "2026-10-23T12:19:07.522Z",
       "cert": {
         "validTo": "2026-12-01",
         "daysLeft": 39,
